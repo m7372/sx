@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#050a1c">
 <title>AlameeereSX</title>
 <script src="https://cdn.jsdelivr.net/npm/mpegts.js@1.7.3/dist/mpegts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:linear-gradient(160deg,#050a1c,#0b1640);background-attachment:fixed;color:#eef0ff;font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;min-height:100vh}
@@ -55,8 +56,8 @@ h1{font-size:22px;text-align:center;margin:10px 0 16px}
 #pbar{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#050a1c;border-bottom:1px solid #25346b}
 #pbar .logo{font-size:16px}
 #pt{flex:1;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#e8d9a8}
-#vw{flex:1;min-height:0;background:#000;display:flex;position:relative}
-video{width:100%;height:100%;background:#000}
+#vw{flex:1;min-height:0;background:#000;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+video{width:100%;height:100%;background:#000;object-fit:contain}
 #gest{position:absolute;inset:0;z-index:2;touch-action:none}
 #hud{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:3;background:rgba(5,10,28,.85);border:1px solid #d4af37;color:#f1d77a;padding:8px 16px;border-radius:999px;font-size:14px;display:none;pointer-events:none;white-space:nowrap}
 #hud.on{display:block}
@@ -71,11 +72,12 @@ video{width:100%;height:100%;background:#000}
 #vol{width:90px;accent-color:#d4af37}
 #perr{color:#f1d77a;font-size:13px;padding:6px 12px;background:#050a1c;word-break:break-word;min-height:22px}
 #pl.full{padding:0}
-#pl.full #pbar{position:absolute;top:0;left:0;right:0;z-index:5;background:linear-gradient(rgba(5,10,28,.9),rgba(5,10,28,0));border:0;padding-top:max(10px,env(safe-area-inset-top));padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));display:none}
+#pl.full #pbar{position:absolute;top:0;left:0;right:0;z-index:5;background:linear-gradient(rgba(5,10,28,.9),rgba(5,10,28,0));border:0;padding-top:10px;display:none}
 #pl.full.ui #pbar{display:flex}
-#pl.full #ctl{position:absolute;bottom:0;left:0;right:0;z-index:5;background:linear-gradient(rgba(5,10,28,0),rgba(5,10,28,.92));border:0;display:none;padding-bottom:max(12px,env(safe-area-inset-bottom));padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+#pl.full #ctl{position:absolute;bottom:0;left:0;right:0;z-index:5;background:linear-gradient(rgba(5,10,28,0),rgba(5,10,28,.92));border:0;display:none;padding-bottom:12px}
 #pl.full.ui #ctl{display:block}
 #pl.full #perr{position:absolute;top:56px;left:0;right:0;z-index:4;background:transparent;text-align:center;pointer-events:none}
+#pl.rot{inset:auto;top:0;left:0;transform-origin:0 0;transform:rotate(90deg) translateY(-100%)}
 .hide{display:none!important}
 </style>
 </head>
@@ -136,7 +138,7 @@ video{width:100%;height:100%;background:#000}
     <div id="sr"><span id="tm">0:00</span><input type="range" id="seek" min="0" max="1000" value="0"></div>
     <div id="br">
       <button class="cb ext" id="vlc">VLC</button>
-      <button class="cb ext" id="cp">نسخ الرابط</button>
+      <button class="cb ext" id="sz">الحجم: ملائم</button>
       <button class="cb" id="fs">ملء الشاشة</button>
       <button class="cb" id="au">الصوت</button>
       <button class="cb" id="mu">كتم</button>
@@ -180,6 +182,14 @@ let allCache = {};
 let searchSeq = 0;
 let searchTimer = null;
 let searchMode = false;
+let szIdx = 0;
+const SIZES = [
+  { k: "contain", n: "ملائم" },
+  { k: "cover", n: "ملء" },
+  { k: "fill", n: "تمديد" },
+  { k: "ratio", n: "16:9", r: 16 / 9 },
+  { k: "ratio", n: "4:3", r: 4 / 3 }
+];
 const v = $("#v");
 
 function el(tag, cls, text) {
@@ -660,10 +670,9 @@ function streamUrl(kind, id, ext) {
 
 function openItem(it) {
   if (type === "live") {
-    const canTs = window.mpegts && mpegts.isSupported();
-    play(streamUrl("live", it.id, canTs ? "ts" : "m3u8"), it.name, "live", directUrl("live", it.id, "m3u8"));
+    play(streamUrl("live", it.id, "m3u8"), it.name, "live", directUrl("live", it.id, "m3u8"), streamUrl("live", it.id, "ts"));
   } else if (type === "vod") {
-    play(streamUrl("movie", it.id, it.ext), it.name, "vod", directUrl("movie", it.id, it.ext));
+    play(streamUrl("movie", it.id, it.ext), it.name, "vod", directUrl("movie", it.id, it.ext), "");
   } else {
     openSeries(it);
   }
@@ -728,7 +737,7 @@ function showEpisodes(it, s) {
     b.appendChild(el("p", "", s.name + " - " + title));
     b.onclick = function () {
       const ext = ep.container_extension || "mkv";
-      play(streamUrl("series", ep.id, ext), it.name + " - " + s.name + " - " + title, "series", directUrl("series", ep.id, ext));
+      play(streamUrl("series", ep.id, ext), it.name + " - " + s.name + " - " + title, "series", directUrl("series", ep.id, ext), "");
     };
     grid.appendChild(b);
   });
@@ -775,20 +784,60 @@ function closePlayer() {
   $("#pl").classList.remove("on");
 }
 
+// live in HLS mode: native on Safari, hls.js elsewhere. returns false if not possible
+function startHls() {
+  const u = cur.url + "?t=" + Date.now();
+  if (v.canPlayType("application/vnd.apple.mpegurl")) {
+    v.src = u;
+    const p0 = v.play();
+    if (p0 && p0.catch) p0.catch(function () {});
+    return true;
+  }
+  if (window.Hls && Hls.isSupported()) {
+    player = new Hls({
+      enableWorker: true,
+      lowLatencyMode: false,
+      maxBufferLength: 30,
+      liveSyncDurationCount: 4,
+      manifestLoadingMaxRetry: 3,
+      levelLoadingMaxRetry: 3,
+      fragLoadingMaxRetry: 4
+    });
+    player.on(Hls.Events.ERROR, function (ev, d) {
+      if (d && d.fatal) {
+        $("#perr").textContent = "انقطع البث (" + (d.details || "hls") + ")";
+        scheduleRetry();
+      }
+    });
+    player.on(Hls.Events.MANIFEST_PARSED, function () {
+      const p = v.play();
+      if (p && p.catch) p.catch(function () {});
+    });
+    player.loadSource(u);
+    player.attachMedia(v);
+    return true;
+  }
+  return false;
+}
+
 function startStream() {
   if (!cur) return;
   killPlayer();
-  const u = cur.url + "?t=" + Date.now();
-  const isTs = cur.url.slice(-3) === ".ts";
-  const isMp4 = cur.url.slice(-4) === ".mp4";
-  const useMpegts = window.mpegts && mpegts.isSupported() && (cur.kind === "live" ? isTs : cur.kind === "vod" && !isMp4);
+  const live = cur.kind === "live";
+  if (live && cur.mode === "hls") {
+    if (startHls()) return;
+    cur.mode = "ts";
+  }
+  const base = live ? cur.tsUrl : cur.url;
+  const u = base + "?t=" + Date.now();
+  const isMp4 = base.slice(-4) === ".mp4";
+  const useMpegts = window.mpegts && mpegts.isSupported() && (live ? true : (cur.kind === "vod" && !isMp4));
   if (!useMpegts) {
     v.src = u;
     const p0 = v.play();
     if (p0 && p0.catch) p0.catch(function () {});
     return;
   }
-  const live = cur.kind === "live";
   player = mpegts.createPlayer(
     { type: "mpegts", isLive: live, url: u },
     {
@@ -818,7 +867,12 @@ function scheduleRetry() {
     return;
   }
   retries++;
-  $("#perr").textContent = "إعادة الاتصال... محاولة " + retries;
+  if (cur.mode === "hls" && retries >= 3 && cur.tsUrl) {
+    cur.mode = "ts";
+    $("#perr").textContent = "تبديل طريقة البث... محاولة " + retries;
+  } else {
+    $("#perr").textContent = "إعادة الاتصال... محاولة " + retries;
+  }
   retryTimer = setTimeout(function () {
     retryTimer = null;
     lastChange = Date.now();
@@ -833,7 +887,8 @@ function watchdog() {
   if (t !== lastT) {
     lastT = t;
     lastChange = Date.now();
-    if (retries > 0 && $("#perr").textContent.indexOf("إعادة") === 0) $("#perr").textContent = "";
+    const m = $("#perr").textContent;
+    if (retries > 0 && (m.indexOf("إعادة") === 0 || m.indexOf("تبديل") === 0)) $("#perr").textContent = "";
     return;
   }
   if (Date.now() - lastChange > 10000) {
@@ -842,9 +897,9 @@ function watchdog() {
   }
 }
 
-function play(url, title, kind, direct) {
+function play(url, title, kind, direct, tsUrl) {
   stopTimers();
-  cur = { url: url, kind: kind, auto: kind === "live", direct: direct || "", title: title };
+  cur = { url: url, kind: kind, auto: kind === "live", direct: direct || "", title: title, tsUrl: tsUrl || "", mode: kind === "live" ? "hls" : "" };
   retries = 0;
   lastT = -1;
   lastChange = Date.now();
@@ -856,6 +911,7 @@ function play(url, title, kind, direct) {
   $("#fw").classList.toggle("hide", isLive);
   $("#pl").classList.add("on");
   startStream();
+  layoutSize();
   if (cur.auto) watchTimer = setInterval(watchdog, 2000);
   upd();
 }
@@ -882,13 +938,23 @@ v.addEventListener("pause", upd);
 v.addEventListener("durationchange", upd);
 v.addEventListener("volumechange", upd);
 
+// a live channel must never end: if it does, reconnect
+v.addEventListener("ended", function () {
+  if (cur && cur.kind === "live") {
+    $("#perr").textContent = "انتهى البث، جاري إعادة الاتصال...";
+    scheduleRetry();
+  }
+});
+
 v.onerror = function () {
-  if (cur && cur.kind !== "live") $("#perr").textContent = "تعذر تشغيل هذا الملف في المتصفح. جرّب زر VLC";
+  if (!cur) return;
+  if (cur.kind === "live") scheduleRetry();
+  else $("#perr").textContent = "تعذر تشغيل هذا الملف في المتصفح. جرّب زر VLC";
 };
 
 $("#pp").onclick = function () {
   if (cur && !player && !v.getAttribute("src")) {
-    play(cur.url, cur.title, cur.kind, cur.direct);
+    play(cur.url, cur.title, cur.kind, cur.direct, cur.tsUrl);
     return;
   }
   if (v.paused) { const p = v.play(); if (p && p.catch) p.catch(function () {}); }
@@ -933,7 +999,36 @@ $("#au").onclick = function () {
   $("#perr").textContent = "مسار الصوت: " + (at[nx].label || at[nx].language || String(nx + 1));
 };
 
-// ---------- full page, volume and brightness gestures ----------
+// ---------- video size ----------
+function layoutSize() {
+  const m = SIZES[szIdx];
+  const box = $("#vw");
+  if (m.k === "ratio") {
+    const cw = box.clientWidth;
+    const ch = box.clientHeight;
+    if (cw > 0 && ch > 0) {
+      let w = cw;
+      let h = cw / m.r;
+      if (h > ch) { h = ch; w = ch * m.r; }
+      v.style.width = Math.floor(w) + "px";
+      v.style.height = Math.floor(h) + "px";
+    }
+    v.style.objectFit = "fill";
+  } else {
+    v.style.width = "100%";
+    v.style.height = "100%";
+    v.style.objectFit = m.k;
+  }
+  $("#sz").textContent = "الحجم: " + m.n;
+}
+
+$("#sz").onclick = function () {
+  szIdx = (szIdx + 1) % SIZES.length;
+  layoutSize();
+  hud("الحجم: " + SIZES[szIdx].n);
+};
+
+// ---------- full page, rotation, volume and brightness gestures ----------
 function hud(text) {
   const h = $("#hud");
   h.textContent = text;
@@ -957,6 +1052,40 @@ function toggleUi() {
   else showUi();
 }
 
+function isRot() {
+  return $("#pl").classList.contains("rot");
+}
+
+// if the phone is still upright while in full mode, rotate the player by CSS
+function fixRot() {
+  const p = $("#pl");
+  const want = full && window.innerHeight > window.innerWidth;
+  if (want) {
+    p.classList.add("rot");
+    p.style.width = window.innerHeight + "px";
+    p.style.height = window.innerWidth + "px";
+  } else {
+    p.classList.remove("rot");
+    p.style.width = "";
+    p.style.height = "";
+  }
+  layoutSize();
+}
+
+function lockLandscape() {
+  try {
+    if (screen.orientation && screen.orientation.lock) {
+      const r = screen.orientation.lock("landscape");
+      if (r && r.catch) r.catch(function () {});
+    }
+  } catch (e) {}
+}
+function unlockOrientation() {
+  try {
+    if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+  } catch (e) {}
+}
+
 function setFull(on) {
   if (on === full) return;
   full = on;
@@ -967,14 +1096,23 @@ function setFull(on) {
     if (p.requestFullscreen) {
       usedApi = true;
       const r = p.requestFullscreen();
-      if (r && r.catch) r.catch(function () { usedApi = false; });
+      if (r && r.then) {
+        r.then(function () { lockLandscape(); }, function () { usedApi = false; });
+      } else {
+        lockLandscape();
+      }
     }
+    setTimeout(fixRot, 450);
     hud("نقرتان للرجوع");
-  } else if (usedApi) {
-    usedApi = false;
-    if (document.fullscreenElement && document.exitFullscreen) {
-      try { document.exitFullscreen(); } catch (e) {}
+  } else {
+    unlockOrientation();
+    if (usedApi) {
+      usedApi = false;
+      if (document.fullscreenElement && document.exitFullscreen) {
+        try { document.exitFullscreen(); } catch (e) {}
+      }
     }
+    fixRot();
   }
 }
 function toggleFull() {
@@ -988,8 +1126,21 @@ document.addEventListener("fullscreenchange", function () {
       full = false;
       $("#pl").classList.remove("full");
       hideUi();
+      unlockOrientation();
+      fixRot();
     }
   }
+});
+
+window.addEventListener("resize", function () {
+  if (full) fixRot();
+  else layoutSize();
+});
+window.addEventListener("orientationchange", function () {
+  setTimeout(function () {
+    if (full) fixRot();
+    else layoutSize();
+  }, 350);
 });
 
 function setVol(x) {
@@ -1030,14 +1181,24 @@ function tap() {
 }
 
 const gest = $("#gest");
-gest.addEventListener("pointerdown", function (e) {
+
+// pointer position in the player's own (possibly rotated) space
+function pt(e) {
+  if (isRot()) {
+    return { x: e.clientY, y: window.innerWidth - e.clientX, w: window.innerHeight, h: window.innerWidth };
+  }
   const r = gest.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top, w: r.width, h: r.height };
+}
+
+gest.addEventListener("pointerdown", function (e) {
+  const p = pt(e);
   g = {
-    x: e.clientX,
-    y: e.clientY,
+    x: p.x,
+    y: p.y,
     t: Date.now(),
-    side: (e.clientX - r.left) > r.width / 2 ? "r" : "l",
-    h: r.height,
+    side: p.x > p.w / 2 ? "r" : "l",
+    h: p.h,
     moved: false,
     vol: v.volume,
     br: bright,
@@ -1047,8 +1208,9 @@ gest.addEventListener("pointerdown", function (e) {
 });
 gest.addEventListener("pointermove", function (e) {
   if (!g || e.pointerId !== g.id) return;
-  const dy = g.y - e.clientY;
-  const dx = e.clientX - g.x;
+  const p = pt(e);
+  const dy = g.y - p.y;
+  const dx = p.x - g.x;
   if (!g.moved) {
     if (Math.abs(dy) < 12 || Math.abs(dy) < Math.abs(dx)) return;
     g.moved = true;
@@ -1062,7 +1224,8 @@ gest.addEventListener("pointerup", function (e) {
   const gg = g;
   g = null;
   if (gg.moved) return;
-  if (Math.abs(e.clientX - gg.x) > 15 || Math.abs(e.clientY - gg.y) > 15) return;
+  const p = pt(e);
+  if (Math.abs(p.x - gg.x) > 15 || Math.abs(p.y - gg.y) > 15) return;
   if (Date.now() - gg.t > 400) return;
   tap();
 });
@@ -1070,7 +1233,7 @@ gest.addEventListener("pointercancel", function () { g = null; });
 
 $("#fs").onclick = toggleFull;
 
-// ---------- VLC and copy ----------
+// ---------- VLC ----------
 function freeConnection() {
   stopTimers();
   killPlayer();
@@ -1096,16 +1259,6 @@ function copyText(t, done) {
   }
 }
 
-$("#cp").onclick = function () {
-  if (!cur || !cur.direct) return;
-  freeConnection();
-  copyText(cur.direct, function (ok) {
-    $("#perr").textContent = ok
-      ? "تم نسخ الرابط. في VLC: ملف ثم فتح شبكة ثم الصق الرابط. تم إيقاف المشغل هنا لتفريغ الاتصال. اضغط ▶ للعودة."
-      : "تعذر النسخ تلقائياً. جرّب زر VLC";
-  });
-};
-
 $("#vlc").onclick = function () {
   if (!cur || !cur.direct) return;
   const u = cur.direct;
@@ -1114,12 +1267,12 @@ $("#vlc").onclick = function () {
   const android = ua.indexOf("Android") > -1;
   freeConnection();
   if (ios) {
-    $("#perr").textContent = "جاري فتح VLC... إن لم يفتح فتأكد أنه مثبت أو استخدم نسخ الرابط. اضغط ▶ للعودة.";
+    $("#perr").textContent = "جاري فتح VLC... إن لم يفتح فتأكد أنه مثبت. اضغط ▶ للعودة.";
     window.location.href = "vlc-x-callback://x-callback-url/stream?url=" + encodeURIComponent(u);
   } else if (android) {
     const scheme = u.indexOf("https") === 0 ? "https" : "http";
     const rest = u.slice(u.indexOf("://") + 3);
-    $("#perr").textContent = "جاري فتح VLC... إن لم يفتح فتأكد أنه مثبت أو استخدم نسخ الرابط. اضغط ▶ للعودة.";
+    $("#perr").textContent = "جاري فتح VLC... إن لم يفتح فتأكد أنه مثبت. اضغط ▶ للعودة.";
     window.location.href = "intent://" + rest + "#Intent;scheme=" + scheme + ";package=org.videolan.vlc;type=video/*;end";
   } else {
     copyText(u, function (ok) {
