@@ -2,68 +2,80 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050a1c">
 <title>AlameeereSX</title>
 <script src="https://cdn.jsdelivr.net/npm/mpegts.js@1.7.3/dist/mpegts.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:#000;color:#f3ead2;font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;min-height:100vh}
+body{background:linear-gradient(160deg,#050a1c,#0b1640);background-attachment:fixed;color:#eef0ff;font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;min-height:100vh}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-input[type=text],input[type=password]{font:inherit;color:#fff;background:#0d0d0d;border:1px solid #3a3020;border-radius:10px;padding:12px;width:100%;direction:ltr;text-align:start}
+input[type=text],input[type=password]{font:inherit;color:#fff;background:#0a1230;border:1px solid #2b3b78;border-radius:10px;padding:12px;width:100%;direction:ltr;text-align:start}
 input[type=text]:focus,input[type=password]:focus{outline:1px solid #d4af37}
 .wrap{max-width:980px;margin:0 auto;padding:14px}
 .logo{font-weight:800;letter-spacing:1px;color:#d4af37}
 h1{font-size:22px;text-align:center;margin:10px 0 16px}
-.box{background:#0d0d0d;border:1px solid #2e2616;border-radius:14px;padding:14px;margin-bottom:12px}
-.box label{display:block;font-size:13px;color:#b8a77a;margin:10px 0 6px}
-.btn{background:#d4af37;color:#1a1300;font-weight:700;padding:12px 18px;border-radius:10px;width:100%;margin-top:12px}
-.btn.alt{background:#1a1608;color:#e8d9a8;border:1px solid #3a3020;font-weight:500;width:auto;margin:0;padding:8px 14px}
+.box{background:#0e1838;border:1px solid #25346b;border-radius:14px;padding:14px;margin-bottom:12px}
+.box label{display:block;font-size:13px;color:#aab6e6;margin:10px 0 6px}
+.btn{background:#d4af37;color:#0a1230;font-weight:700;padding:12px 18px;border-radius:10px;width:100%;margin-top:12px}
+.btn.alt{background:#12204a;color:#f1d77a;border:1px solid #2b3b78;font-weight:500;width:auto;margin:0;padding:8px 14px}
 .chk{display:flex;align-items:center;gap:8px;font-size:14px;margin-top:10px;color:#e8d9a8}
-.err{color:#ff7b7b;font-size:14px;margin-top:10px;word-break:break-word}
+.err{color:#ff8f8f;font-size:14px;margin-top:10px;word-break:break-word}
 .saved{margin-top:14px}
-.saved h3{font-size:13px;color:#b8a77a;margin-bottom:6px;font-weight:500}
+.saved h3{font-size:13px;color:#aab6e6;margin-bottom:6px;font-weight:500}
 .sv{display:flex;gap:6px;margin-bottom:6px}
-.sv .pick{flex:1;text-align:start;background:#14110a;border:1px solid #2e2616;border-radius:10px;padding:10px;font-size:13px;direction:ltr;word-break:break-all}
-.sv .del{background:#2a1010;border:1px solid #4a2020;border-radius:10px;padding:0 14px;color:#ff9a9a}
+.sv .pick{flex:1;text-align:start;background:#0c1436;border:1px solid #25346b;border-radius:10px;padding:10px;font-size:13px;direction:ltr;word-break:break-all}
+.sv .del{background:#3a1420;border:1px solid #5a2030;border-radius:10px;padding:0 14px;color:#ff9a9a}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
-.stat{background:#0d0d0d;border:1px solid #2e2616;border-radius:12px;padding:10px;text-align:center}
-.stat small{display:block;color:#a8966a;font-size:12px;margin-bottom:4px}
+.stat{background:#0e1838;border:1px solid #25346b;border-radius:12px;padding:10px;text-align:center}
+.stat small{display:block;color:#9aa8dc;font-size:12px;margin-bottom:4px}
 .stat b{font-size:14px;color:#d4af37}
 .tabs{display:flex;gap:8px;margin:12px 0}
-.tab{flex:1;padding:11px 6px;border-radius:999px;background:#0d0d0d;border:1px solid #2e2616}
-.tab.on{background:#d4af37;color:#1a1300;font-weight:700;border-color:#d4af37}
+.tab{flex:1;padding:11px 6px;border-radius:999px;background:#0e1838;border:1px solid #25346b}
+.tab.on{background:#d4af37;color:#0a1230;font-weight:700;border-color:#d4af37}
 .row2{display:flex;gap:8px;margin-bottom:10px}
 .row2 input{direction:rtl}
 #cats{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:8px}
-.cat{flex:none;padding:8px 12px;border-radius:999px;background:#0d0d0d;border:1px solid #2e2616;font-size:13px;white-space:nowrap}
-.cat.on{background:#2a2208;border-color:#d4af37;color:#f1d77a}
+.cat{flex:none;padding:8px 12px;border-radius:999px;background:#0e1838;border:1px solid #25346b;font-size:13px;white-space:nowrap}
+.cat.on{background:#1a2a5c;border-color:#d4af37;color:#f1d77a}
 .cat.sp{border-color:#d4af37;color:#d4af37;font-weight:700}
-.cat.sp.on{background:#d4af37;color:#1a1300}
+.cat.sp.on{background:#d4af37;color:#0a1230}
 #grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
-.card{background:#0d0d0d;border:1px solid #2e2616;border-radius:10px;overflow:hidden;text-align:start;display:block;width:100%}
+.card{background:#0e1838;border:1px solid #25346b;border-radius:10px;overflow:hidden;text-align:start;display:block;width:100%}
 .card:active{border-color:#d4af37}
-.ph{width:100%;aspect-ratio:2/3;background:#050505;display:flex;align-items:center;justify-content:center}
+.ph{width:100%;aspect-ratio:2/3;background:#070d26;display:flex;align-items:center;justify-content:center}
 .card.live .ph{aspect-ratio:16/9}
 .ph img{width:100%;height:100%;object-fit:cover}
 .card.live .ph img{object-fit:contain;padding:8px}
 .card p{padding:7px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.msg{grid-column:1/-1;text-align:center;color:#a8966a;padding:24px}
-#pl{position:fixed;inset:0;background:#000;z-index:50;display:none;flex-direction:column}
+.msg{grid-column:1/-1;text-align:center;color:#9aa8dc;padding:24px}
+.msg.cnt{padding:6px;font-size:12px;color:#d4af37}
+#pl{position:fixed;inset:0;background:#050a1c;z-index:50;display:none;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
 #pl.on{display:flex}
-#pbar{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#000;border-bottom:1px solid #2e2616}
+#pbar{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#050a1c;border-bottom:1px solid #25346b}
 #pbar .logo{font-size:16px}
 #pt{flex:1;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#e8d9a8}
-#vw{flex:1;min-height:0;background:#000;display:flex}
+#vw{flex:1;min-height:0;background:#000;display:flex;position:relative}
 video{width:100%;height:100%;background:#000}
-#ctl{background:#000;border-top:1px solid #2e2616;padding:8px 12px 12px}
+#gest{position:absolute;inset:0;z-index:2;touch-action:none}
+#hud{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:3;background:rgba(5,10,28,.85);border:1px solid #d4af37;color:#f1d77a;padding:8px 16px;border-radius:999px;font-size:14px;display:none;pointer-events:none;white-space:nowrap}
+#hud.on{display:block}
+#ctl{background:#050a1c;border-top:1px solid #25346b;padding:8px 12px 12px}
 #sr{display:flex;align-items:center;gap:10px;direction:ltr}
 #seek{flex:1;accent-color:#d4af37}
 #tm{font-size:12px;color:#d4af37;min-width:90px;text-align:center}
 #br{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;flex-wrap:wrap;direction:ltr}
-.cb{background:#14110a;border:1px solid #3a3020;border-radius:999px;padding:9px 14px;font-size:14px;color:#f1d77a;min-width:46px}
-.cb.big{background:#d4af37;color:#1a1300;font-weight:700;min-width:64px}
+.cb{background:#0e1838;border:1px solid #2b3b78;border-radius:999px;padding:9px 14px;font-size:14px;color:#f1d77a;min-width:46px}
+.cb.big{background:#d4af37;color:#0a1230;font-weight:700;min-width:64px}
+.cb.ext{border-color:#d4af37;color:#d4af37;font-weight:700}
 #vol{width:90px;accent-color:#d4af37}
-#perr{color:#f1d77a;font-size:13px;padding:6px 12px;background:#000;word-break:break-word;min-height:22px}
+#perr{color:#f1d77a;font-size:13px;padding:6px 12px;background:#050a1c;word-break:break-word;min-height:22px}
+#pl.full{padding:0}
+#pl.full #pbar{position:absolute;top:0;left:0;right:0;z-index:5;background:linear-gradient(rgba(5,10,28,.9),rgba(5,10,28,0));border:0;padding-top:max(10px,env(safe-area-inset-top));padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));display:none}
+#pl.full.ui #pbar{display:flex}
+#pl.full #ctl{position:absolute;bottom:0;left:0;right:0;z-index:5;background:linear-gradient(rgba(5,10,28,0),rgba(5,10,28,.92));border:0;display:none;padding-bottom:max(12px,env(safe-area-inset-bottom));padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+#pl.full.ui #ctl{display:block}
+#pl.full #perr{position:absolute;top:56px;left:0;right:0;z-index:4;background:transparent;text-align:center;pointer-events:none}
 .hide{display:none!important}
 </style>
 </head>
@@ -99,7 +111,7 @@ video{width:100%;height:100%;background:#000}
       <button class="tab" data-t="series">مسلسلات</button>
     </div>
     <div class="row2">
-      <input type="text" id="q" placeholder="بحث...">
+      <input type="text" id="q" placeholder="بحث في كل الأقسام..." autocomplete="off">
       <button class="btn alt" id="back">رجوع</button>
       <button class="btn alt" id="out">خروج</button>
     </div>
@@ -114,11 +126,17 @@ video{width:100%;height:100%;background:#000}
     <div id="pt"></div>
     <span class="logo">AlameeereSX</span>
   </div>
-  <div id="vw"><video id="v" playsinline></video></div>
+  <div id="vw">
+    <video id="v" playsinline></video>
+    <div id="gest"></div>
+    <div id="hud"></div>
+  </div>
   <div id="perr"></div>
   <div id="ctl">
     <div id="sr"><span id="tm">0:00</span><input type="range" id="seek" min="0" max="1000" value="0"></div>
     <div id="br">
+      <button class="cb ext" id="vlc">VLC</button>
+      <button class="cb ext" id="cp">نسخ الرابط</button>
       <button class="cb" id="fs">ملء الشاشة</button>
       <button class="cb" id="au">الصوت</button>
       <button class="cb" id="mu">كتم</button>
@@ -150,6 +168,18 @@ let watchTimer = null;
 let lastT = -1;
 let lastChange = 0;
 let dragging = false;
+let full = false;
+let usedApi = false;
+let uiTimer = null;
+let hudTimer = null;
+let bright = 1;
+let lastTap = 0;
+let tapTimer = null;
+let g = null;
+let allCache = {};
+let searchSeq = 0;
+let searchTimer = null;
+let searchMode = false;
 const v = $("#v");
 
 function el(tag, cls, text) {
@@ -171,6 +201,21 @@ function imgp(u) {
   const s = String(u);
   if (s.indexOf("http") !== 0) return "";
   return API + "/i/" + b64(s);
+}
+
+// ---------- direct links (for VLC) ----------
+function baseServer() {
+  let s = String(cfg.server || "").trim();
+  if (s.indexOf("http") !== 0) s = "http://" + s;
+  const a = s.indexOf("/player_api.php");
+  if (a > -1) s = s.slice(0, a);
+  const b = s.indexOf("/get.php");
+  if (b > -1) s = s.slice(0, b);
+  while (s.length > 0 && s.charAt(s.length - 1) === "/") s = s.slice(0, s.length - 1);
+  return s;
+}
+function directUrl(kind, id, ext) {
+  return baseServer() + "/" + kind + "/" + encodeURIComponent(cfg.user) + "/" + encodeURIComponent(cfg.pass) + "/" + id + "." + ext;
 }
 
 // ---------- filters ----------
@@ -223,6 +268,23 @@ function isSport(s) {
     if (up.includes(SPORT_WORDS[i]) || raw.includes(SPORT_WORDS[i])) return true;
   }
   return false;
+}
+
+// ---------- text normalize for search ----------
+function normText(s) {
+  const t = String(s || "").toLowerCase();
+  let out = "";
+  for (let i = 0; i < t.length; i++) {
+    let ch = t.charAt(i);
+    const code = t.charCodeAt(i);
+    if (code >= 0x064b && code <= 0x065f) continue;
+    if (code === 0x0640) continue;
+    if (ch === "أ" || ch === "إ" || ch === "آ" || ch === "ٱ") ch = "ا";
+    else if (ch === "ى") ch = "ي";
+    else if (ch === "ة") ch = "ه";
+    out += ch;
+  }
+  return out;
 }
 
 // ---------- api ----------
@@ -320,6 +382,10 @@ $("#go").onclick = async function () {
   const pass = $("#pwd").value;
   if (!server || !user || !pass) { $("#lerr").textContent = "أدخل السيرفر واليوزر والباسورد"; return; }
   cfg = { name: $("#nm").value.trim(), server: server, user: user, pass: pass, ar: $("#fAr").checked, ad: $("#fAd").checked };
+  allCache = {};
+  searchMode = false;
+  searchSeq++;
+  $("#q").value = "";
   $("#go").textContent = "جاري الاتصال...";
   try {
     const info = await call({});
@@ -353,6 +419,8 @@ document.querySelectorAll(".tab").forEach(function (b) {
     document.querySelectorAll(".tab").forEach(function (x) { x.classList.toggle("on", x === b); });
     type = b.dataset.t;
     sportMode = false;
+    searchMode = false;
+    searchSeq++;
     $("#q").value = "";
     loadCats();
   };
@@ -382,11 +450,12 @@ function itemAction() {
 }
 
 function emptyText() {
-  return sportMode ? "لا توجد أقسام رياضة في هذا الحساب" : "لا توجد أقسام (جرّب إيقاف فلتر العربي)";
+  return sportMode ? "لا توجد أقسام رياضة في هذا الحساب" : "لا توجد أقسام (جرّب إيقاف فلتر العربي أو ابحث بالاسم)";
 }
 
 async function loadCats() {
   backFn = null;
+  searchMode = false;
   $("#cats").innerHTML = "";
   $("#grid").innerHTML = "";
   $("#grid").appendChild(el("div", "msg", "جاري التحميل..."));
@@ -415,6 +484,8 @@ function renderCats() {
   const sb = el("button", "cat sp" + (sportMode ? " on" : ""), "رياضة");
   sb.onclick = function () {
     sportMode = !sportMode;
+    searchMode = false;
+    searchSeq++;
     $("#q").value = "";
     applyCatFilter();
     renderCats();
@@ -427,25 +498,31 @@ function renderCats() {
   };
   box.appendChild(sb);
   cats.forEach(function (c) {
-    const b = el("button", "cat" + (c.id === curCat ? " on" : ""), c.name);
-    b.onclick = function () { $("#q").value = ""; loadItems(c.id); };
+    const b = el("button", "cat" + (c.id === curCat && !searchMode ? " on" : ""), c.name);
+    b.onclick = function () {
+      searchSeq++;
+      $("#q").value = "";
+      loadItems(c.id);
+    };
     box.appendChild(b);
   });
 }
 
 function normItem(x) {
+  const cat = String(x.category_id === undefined || x.category_id === null ? "" : x.category_id);
   if (type === "live") {
-    return { id: String(x.stream_id), name: String(x.name || ""), logo: imgp(x.stream_icon), ext: "ts" };
+    return { id: String(x.stream_id), name: String(x.name || ""), logo: imgp(x.stream_icon), ext: "ts", cat: cat };
   }
   if (type === "vod") {
-    return { id: String(x.stream_id), name: String(x.name || ""), logo: imgp(x.stream_icon), ext: String(x.container_extension || "mp4") };
+    return { id: String(x.stream_id), name: String(x.name || ""), logo: imgp(x.stream_icon), ext: String(x.container_extension || "mp4"), cat: cat };
   }
-  return { id: String(x.series_id), name: String(x.name || ""), logo: imgp(x.cover), ext: "mkv" };
+  return { id: String(x.series_id), name: String(x.name || ""), logo: imgp(x.cover), ext: "mkv", cat: cat };
 }
 
 async function loadItems(id) {
   curCat = id;
   backFn = null;
+  searchMode = false;
   renderCats();
   const grid = $("#grid");
   grid.innerHTML = "";
@@ -462,11 +539,10 @@ async function loadItems(id) {
   }
 }
 
-function drawItems() {
+function drawList(list, head) {
   const grid = $("#grid");
   grid.innerHTML = "";
-  const q = $("#q").value.trim().toLowerCase();
-  const list = items.filter(function (x) { return !q || x.name.toLowerCase().indexOf(q) > -1; });
+  if (head) grid.appendChild(el("div", "msg cnt", head));
   if (!list.length) { grid.appendChild(el("div", "msg", "لا توجد نتائج")); return; }
   list.forEach(function (it) {
     const b = el("button", "card" + (type === "live" ? " live" : ""));
@@ -485,9 +561,96 @@ function drawItems() {
   });
 }
 
-$("#q").addEventListener("input", function () {
+function drawItems() {
+  const q = normText($("#q").value.trim());
+  const list = items.filter(function (x) { return !q || normText(x.name).indexOf(q) > -1; });
+  drawList(list, "");
+}
+
+// ---------- global search (all categories) ----------
+async function loadAllItems() {
+  if (allCache[type]) return allCache[type];
+  let raw = null;
+  try { raw = await call({ action: itemAction() }); } catch (e) { raw = null; }
+  let list = [];
+  if (Array.isArray(raw) && raw.length) {
+    list = raw.map(normItem);
+  } else {
+    const ids = allCats.map(function (c) { return c.id; });
+    for (let i = 0; i < ids.length; i += 4) {
+      const part = await Promise.all(ids.slice(i, i + 4).map(function (id) {
+        return call({ action: itemAction(), category_id: id }).catch(function () { return []; });
+      }));
+      part.forEach(function (r) {
+        if (Array.isArray(r)) list = list.concat(r.map(normItem));
+      });
+    }
+  }
+  list.forEach(function (it) { it.n = normText(it.name); });
+  allCache[type] = list;
+  return list;
+}
+
+async function runSearch(q) {
+  const seq = ++searchSeq;
+  searchMode = true;
+  backFn = null;
+  renderCats();
+  const grid = $("#grid");
+  grid.innerHTML = "";
+  grid.appendChild(el("div", "msg", "جاري البحث في كل الأقسام..."));
+  let all = [];
+  try {
+    all = await loadAllItems();
+  } catch (e) {
+    if (seq !== searchSeq) return;
+    grid.innerHTML = "";
+    grid.appendChild(el("div", "msg", "تعذر البحث: " + e.message));
+    return;
+  }
+  if (seq !== searchSeq) return;
+  const words = normText(q).split(" ").filter(function (w) { return w.length > 0; });
+  const adultCats = {};
+  if (cfg.ad) {
+    allCats.forEach(function (c) { if (isAdult(c.name)) adultCats[c.id] = true; });
+  }
+  const res = [];
+  let capped = false;
+  for (let i = 0; i < all.length; i++) {
+    const it = all[i];
+    let ok = true;
+    for (let j = 0; j < words.length; j++) {
+      if (it.n.indexOf(words[j]) < 0) { ok = false; break; }
+    }
+    if (!ok) continue;
+    if (cfg.ad && (adultCats[it.cat] || isAdult(it.name))) continue;
+    res.push(it);
+    if (res.length >= 300) { capped = true; break; }
+  }
+  const head = "نتائج البحث: " + res.length + (capped ? " (أول 300)" : "");
+  drawList(res, head);
+}
+
+function onSearch() {
+  const q = $("#q").value.trim();
+  if (q.length >= 2) {
+    runSearch(q);
+    return;
+  }
+  searchSeq++;
+  if (searchMode) {
+    searchMode = false;
+    if (curCat) { loadItems(curCat); return; }
+    $("#grid").innerHTML = "";
+    return;
+  }
   if (backFn) return;
   drawItems();
+}
+
+$("#q").addEventListener("input", function () {
+  if (searchTimer) clearTimeout(searchTimer);
+  searchTimer = setTimeout(onSearch, 300);
 });
 
 // ---------- open ----------
@@ -498,9 +661,9 @@ function streamUrl(kind, id, ext) {
 function openItem(it) {
   if (type === "live") {
     const canTs = window.mpegts && mpegts.isSupported();
-    play(streamUrl("live", it.id, canTs ? "ts" : "m3u8"), it.name, "live");
+    play(streamUrl("live", it.id, canTs ? "ts" : "m3u8"), it.name, "live", directUrl("live", it.id, "m3u8"));
   } else if (type === "vod") {
-    play(streamUrl("movie", it.id, it.ext), it.name, "vod");
+    play(streamUrl("movie", it.id, it.ext), it.name, "vod", directUrl("movie", it.id, it.ext));
   } else {
     openSeries(it);
   }
@@ -521,24 +684,35 @@ async function openSeries(it) {
         seasons.push({ name: "الموسم " + k, list: eps[k] || [] });
       });
     }
-    backFn = function () { drawItems(); backFn = null; };
-    showSeasons(it, seasons);
+    const wasSearch = searchMode;
+    const q = $("#q").value.trim();
+    backFn = function () {
+      backFn = null;
+      if (wasSearch && q.length >= 2) runSearch(q);
+      else drawItems();
+    };
+    showSeasons(it, seasons, wasSearch, q);
   } catch (e) {
     grid.innerHTML = "";
     grid.appendChild(el("div", "msg", "تعذر التحميل: " + e.message));
   }
 }
 
-function showSeasons(it, seasons) {
+function showSeasons(it, seasons, wasSearch, q) {
   const grid = $("#grid");
   grid.innerHTML = "";
   if (!seasons.length) { grid.appendChild(el("div", "msg", "لا توجد مواسم")); return; }
   if (seasons.length === 1) { showEpisodes(it, seasons[0]); return; }
+  const toList = function () {
+    backFn = null;
+    if (wasSearch && q.length >= 2) runSearch(q);
+    else drawItems();
+  };
   seasons.forEach(function (s) {
     const b = el("button", "card");
     b.appendChild(el("p", "", s.name));
     b.onclick = function () {
-      backFn = function () { showSeasons(it, seasons); backFn = function () { drawItems(); backFn = null; }; };
+      backFn = function () { showSeasons(it, seasons, wasSearch, q); backFn = toList; };
       showEpisodes(it, s);
     };
     grid.appendChild(b);
@@ -554,15 +728,20 @@ function showEpisodes(it, s) {
     b.appendChild(el("p", "", s.name + " - " + title));
     b.onclick = function () {
       const ext = ep.container_extension || "mkv";
-      play(streamUrl("series", ep.id, ext), it.name + " - " + s.name + " - " + title, "series");
+      play(streamUrl("series", ep.id, ext), it.name + " - " + s.name + " - " + title, "series", directUrl("series", ep.id, ext));
     };
     grid.appendChild(b);
   });
 }
 
 $("#back").onclick = function () {
-  if (backFn) backFn();
-  else if (curCat) loadItems(curCat);
+  if (backFn) { backFn(); return; }
+  if (searchMode) {
+    searchSeq++;
+    searchMode = false;
+    $("#q").value = "";
+  }
+  if (curCat) loadItems(curCat);
 };
 
 // ---------- player ----------
@@ -592,7 +771,7 @@ function closePlayer() {
   stopTimers();
   cur = null;
   killPlayer();
-  if (document.fullscreenElement && document.exitFullscreen) { try { document.exitFullscreen(); } catch (e) {} }
+  setFull(false);
   $("#pl").classList.remove("on");
 }
 
@@ -663,9 +842,9 @@ function watchdog() {
   }
 }
 
-function play(url, title, kind) {
+function play(url, title, kind, direct) {
   stopTimers();
-  cur = { url: url, kind: kind, auto: kind === "live" };
+  cur = { url: url, kind: kind, auto: kind === "live", direct: direct || "", title: title };
   retries = 0;
   lastT = -1;
   lastChange = Date.now();
@@ -704,10 +883,14 @@ v.addEventListener("durationchange", upd);
 v.addEventListener("volumechange", upd);
 
 v.onerror = function () {
-  if (cur && cur.kind !== "live") $("#perr").textContent = "تعذر تشغيل هذا الملف في المتصفح";
+  if (cur && cur.kind !== "live") $("#perr").textContent = "تعذر تشغيل هذا الملف في المتصفح. جرّب زر VLC";
 };
 
 $("#pp").onclick = function () {
+  if (cur && !player && !v.getAttribute("src")) {
+    play(cur.url, cur.title, cur.kind, cur.direct);
+    return;
+  }
   if (v.paused) { const p = v.play(); if (p && p.catch) p.catch(function () {}); }
   else v.pause();
 };
@@ -750,14 +933,200 @@ $("#au").onclick = function () {
   $("#perr").textContent = "مسار الصوت: " + (at[nx].label || at[nx].language || String(nx + 1));
 };
 
-$("#fs").onclick = function () {
+// ---------- full page, volume and brightness gestures ----------
+function hud(text) {
+  const h = $("#hud");
+  h.textContent = text;
+  h.classList.add("on");
+  if (hudTimer) clearTimeout(hudTimer);
+  hudTimer = setTimeout(function () { h.classList.remove("on"); }, 1200);
+}
+
+function showUi() {
   const p = $("#pl");
-  if (document.fullscreenElement) {
-    if (document.exitFullscreen) document.exitFullscreen();
-  } else if (p.requestFullscreen) {
-    p.requestFullscreen();
-  } else if (v.webkitEnterFullscreen) {
-    v.webkitEnterFullscreen();
+  p.classList.add("ui");
+  if (uiTimer) clearTimeout(uiTimer);
+  uiTimer = setTimeout(function () { p.classList.remove("ui"); }, 3500);
+}
+function hideUi() {
+  if (uiTimer) { clearTimeout(uiTimer); uiTimer = null; }
+  $("#pl").classList.remove("ui");
+}
+function toggleUi() {
+  if ($("#pl").classList.contains("ui")) hideUi();
+  else showUi();
+}
+
+function setFull(on) {
+  if (on === full) return;
+  full = on;
+  const p = $("#pl");
+  p.classList.toggle("full", on);
+  hideUi();
+  if (on) {
+    if (p.requestFullscreen) {
+      usedApi = true;
+      const r = p.requestFullscreen();
+      if (r && r.catch) r.catch(function () { usedApi = false; });
+    }
+    hud("نقرتان للرجوع");
+  } else if (usedApi) {
+    usedApi = false;
+    if (document.fullscreenElement && document.exitFullscreen) {
+      try { document.exitFullscreen(); } catch (e) {}
+    }
+  }
+}
+function toggleFull() {
+  setFull(!full);
+}
+
+document.addEventListener("fullscreenchange", function () {
+  if (!document.fullscreenElement && usedApi) {
+    usedApi = false;
+    if (full) {
+      full = false;
+      $("#pl").classList.remove("full");
+      hideUi();
+    }
+  }
+});
+
+function setVol(x) {
+  if (x < 0) x = 0;
+  if (x > 1) x = 1;
+  if (x > 0) v.muted = false;
+  v.volume = x;
+  if (Math.abs(v.volume - x) > 0.02) {
+    hud("الصوت يُضبط من أزرار الجهاز");
+    return;
+  }
+  $("#vol").value = String(Math.round(x * 100));
+  hud("الصوت " + Math.round(x * 100) + "%");
+}
+
+function setBright(x) {
+  if (x < 0.2) x = 0.2;
+  if (x > 2) x = 2;
+  bright = x;
+  v.style.filter = "brightness(" + x + ")";
+  hud("الإضاءة " + Math.round(x * 100) + "%");
+}
+
+function tap() {
+  const now = Date.now();
+  if (now - lastTap < 320) {
+    lastTap = 0;
+    if (tapTimer) { clearTimeout(tapTimer); tapTimer = null; }
+    toggleFull();
+    return;
+  }
+  lastTap = now;
+  tapTimer = setTimeout(function () {
+    tapTimer = null;
+    lastTap = 0;
+    if (full) toggleUi();
+  }, 330);
+}
+
+const gest = $("#gest");
+gest.addEventListener("pointerdown", function (e) {
+  const r = gest.getBoundingClientRect();
+  g = {
+    x: e.clientX,
+    y: e.clientY,
+    t: Date.now(),
+    side: (e.clientX - r.left) > r.width / 2 ? "r" : "l",
+    h: r.height,
+    moved: false,
+    vol: v.volume,
+    br: bright,
+    id: e.pointerId
+  };
+  try { gest.setPointerCapture(e.pointerId); } catch (x) {}
+});
+gest.addEventListener("pointermove", function (e) {
+  if (!g || e.pointerId !== g.id) return;
+  const dy = g.y - e.clientY;
+  const dx = e.clientX - g.x;
+  if (!g.moved) {
+    if (Math.abs(dy) < 12 || Math.abs(dy) < Math.abs(dx)) return;
+    g.moved = true;
+  }
+  const d = dy / (g.h * 0.7);
+  if (g.side === "r") setVol(g.vol + d);
+  else setBright(g.br + d * 1.5);
+});
+gest.addEventListener("pointerup", function (e) {
+  if (!g) return;
+  const gg = g;
+  g = null;
+  if (gg.moved) return;
+  if (Math.abs(e.clientX - gg.x) > 15 || Math.abs(e.clientY - gg.y) > 15) return;
+  if (Date.now() - gg.t > 400) return;
+  tap();
+});
+gest.addEventListener("pointercancel", function () { g = null; });
+
+$("#fs").onclick = toggleFull;
+
+// ---------- VLC and copy ----------
+function freeConnection() {
+  stopTimers();
+  killPlayer();
+}
+
+function copyText(t, done) {
+  function fallback() {
+    const ta = document.createElement("textarea");
+    ta.value = t;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(ta);
+    done(ok);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(t).then(function () { done(true); }, fallback);
+  } else {
+    fallback();
+  }
+}
+
+$("#cp").onclick = function () {
+  if (!cur || !cur.direct) return;
+  freeConnection();
+  copyText(cur.direct, function (ok) {
+    $("#perr").textContent = ok
+      ? "تم نسخ الرابط. في VLC: ملف ثم فتح شبكة ثم الصق الرابط. تم إيقاف المشغل هنا لتفريغ الاتصال. اضغط ▶ للعودة."
+      : "تعذر النسخ تلقائياً. جرّب زر VLC";
+  });
+};
+
+$("#vlc").onclick = function () {
+  if (!cur || !cur.direct) return;
+  const u = cur.direct;
+  const ua = navigator.userAgent || "";
+  const ios = ua.indexOf("iPhone") > -1 || ua.indexOf("iPad") > -1 || (ua.indexOf("Macintosh") > -1 && navigator.maxTouchPoints > 1);
+  const android = ua.indexOf("Android") > -1;
+  freeConnection();
+  if (ios) {
+    $("#perr").textContent = "جاري فتح VLC... إن لم يفتح فتأكد أنه مثبت أو استخدم نسخ الرابط. اضغط ▶ للعودة.";
+    window.location.href = "vlc-x-callback://x-callback-url/stream?url=" + encodeURIComponent(u);
+  } else if (android) {
+    const scheme = u.indexOf("https") === 0 ? "https" : "http";
+    const rest = u.slice(u.indexOf("://") + 3);
+    $("#perr").textContent = "جاري فتح VLC... إن لم يفتح فتأكد أنه مثبت أو استخدم نسخ الرابط. اضغط ▶ للعودة.";
+    window.location.href = "intent://" + rest + "#Intent;scheme=" + scheme + ";package=org.videolan.vlc;type=video/*;end";
+  } else {
+    copyText(u, function (ok) {
+      $("#perr").textContent = ok
+        ? "تم نسخ الرابط. في VLC: ملف ثم فتح شبكة ثم الصق الرابط. اضغط ▶ للعودة."
+        : "تعذر النسخ تلقائياً";
+    });
   }
 };
 
