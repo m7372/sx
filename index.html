@@ -56,6 +56,11 @@ h1{font-size:22px;text-align:center;margin:10px 0 16px}
 #pbar{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#050a1c;border-bottom:1px solid #25346b}
 #pbar .logo{font-size:16px}
 #pt{flex:1;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#e8d9a8}
+#mnu{background:#12204a;border:1px solid #2b3b78;border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;align-items:flex-end;justify-content:center}
+#mnu span{display:block;height:3px;border-radius:2px;background:#f1d77a}
+#mnu span:nth-child(1){width:24px}
+#mnu span:nth-child(2){width:17px}
+#mnu span:nth-child(3){width:10px}
 #vw{flex:1;min-height:0;background:#000;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 video{width:100%;height:100%;background:#000;object-fit:contain}
 #gest{position:absolute;inset:0;z-index:2;touch-action:none}
@@ -69,8 +74,18 @@ video{width:100%;height:100%;background:#000;object-fit:contain}
 .cb{background:#0e1838;border:1px solid #2b3b78;border-radius:999px;padding:9px 14px;font-size:14px;color:#f1d77a;min-width:46px}
 .cb.big{background:#d4af37;color:#0a1230;font-weight:700;min-width:64px}
 .cb.ext{border-color:#d4af37;color:#d4af37;font-weight:700}
+.cb.danger{border-color:#7a2a3a;color:#ff9a9a}
 #vol{width:90px;accent-color:#d4af37}
 #perr{color:#f1d77a;font-size:13px;padding:6px 12px;background:#050a1c;word-break:break-word;min-height:22px}
+#gp{position:absolute;top:0;bottom:0;right:0;width:min(88%,380px);background:#070d26;border-left:1px solid #25346b;z-index:20;display:none;flex-direction:column}
+#gp.on{display:flex}
+#gph{display:flex;align-items:center;gap:8px;padding:12px;border-bottom:1px solid #25346b;background:#050a1c}
+#gpt{flex:1;font-size:15px;color:#f1d77a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#gpb{overflow-y:auto;padding:10px;flex:1}
+.gi{display:block;width:100%;text-align:start;background:#0e1838;border:1px solid #25346b;border-radius:10px;padding:12px;margin-bottom:8px;font-size:14px}
+.gi.on{border-color:#d4af37;color:#f1d77a}
+.gi:active{border-color:#d4af37}
+.gmsg{text-align:center;color:#9aa8dc;padding:20px;font-size:14px}
 #pl.full{padding:0}
 #pl.full #pbar{position:absolute;top:0;left:0;right:0;z-index:5;background:linear-gradient(rgba(5,10,28,.9),rgba(5,10,28,0));border:0;padding-top:10px;display:none}
 #pl.full.ui #pbar{display:flex}
@@ -124,7 +139,7 @@ video{width:100%;height:100%;background:#000;object-fit:contain}
 
 <div id="pl">
   <div id="pbar">
-    <button class="btn alt" id="pclose">إغلاق</button>
+    <button id="mnu"><span></span><span></span><span></span></button>
     <div id="pt"></div>
     <span class="logo">AlameeereSX</span>
   </div>
@@ -139,14 +154,21 @@ video{width:100%;height:100%;background:#000;object-fit:contain}
     <div id="br">
       <button class="cb ext" id="vlc">VLC</button>
       <button class="cb ext" id="sz">الحجم: ملائم</button>
-      <button class="cb" id="fs">ملء الشاشة</button>
-      <button class="cb" id="au">الصوت</button>
       <button class="cb" id="mu">كتم</button>
       <input type="range" id="vol" min="0" max="100" value="100">
       <button class="cb" id="fw">+10</button>
       <button class="cb big" id="pp">❚❚</button>
       <button class="cb" id="bk">-10</button>
+      <button class="cb danger" id="pclose">إغلاق</button>
     </div>
+  </div>
+  <div id="gp">
+    <div id="gph">
+      <button class="btn alt hide" id="gpback">رجوع</button>
+      <div id="gpt">المجموعات</div>
+      <button class="btn alt" id="gpclose">✕</button>
+    </div>
+    <div id="gpb"></div>
   </div>
 </div>
 
@@ -183,6 +205,8 @@ let searchSeq = 0;
 let searchTimer = null;
 let searchMode = false;
 let szIdx = 0;
+let gpSeq = 0;
+let gpCur = null;
 const SIZES = [
   { k: "contain", n: "ملائم" },
   { k: "cover", n: "ملء" },
@@ -753,6 +777,85 @@ $("#back").onclick = function () {
   if (curCat) loadItems(curCat);
 };
 
+// ---------- groups panel inside the player ----------
+function gpClear() {
+  $("#gpb").innerHTML = "";
+}
+
+function showGpCats() {
+  gpSeq++;
+  gpCur = null;
+  $("#gpt").textContent = "المجموعات";
+  $("#gpback").classList.add("hide");
+  const body = $("#gpb");
+  gpClear();
+  if (!cats.length) {
+    body.appendChild(el("div", "gmsg", "لا توجد مجموعات"));
+    return;
+  }
+  cats.forEach(function (c) {
+    const b = el("button", "gi" + (c.id === curCat ? " on" : ""), c.name);
+    b.onclick = function () { showGpItems(c); };
+    body.appendChild(b);
+  });
+}
+
+async function showGpItems(c) {
+  const seq = ++gpSeq;
+  gpCur = c;
+  $("#gpt").textContent = c.name;
+  $("#gpback").classList.remove("hide");
+  const body = $("#gpb");
+  gpClear();
+  body.appendChild(el("div", "gmsg", "جاري التحميل..."));
+  try {
+    const raw = await call({ action: itemAction(), category_id: c.id });
+    if (seq !== gpSeq) return;
+    let list = (Array.isArray(raw) ? raw : []).map(normItem);
+    if (cfg.ad) list = list.filter(function (x) { return !isAdult(x.name); });
+    gpClear();
+    if (!list.length) {
+      body.appendChild(el("div", "gmsg", "لا توجد عناصر"));
+      return;
+    }
+    list.forEach(function (it) {
+      const on = cur && cur.title === it.name;
+      const b = el("button", "gi" + (on ? " on" : ""), it.name);
+      b.onclick = function () {
+        closeGp();
+        if (type === "series") {
+          closePlayer();
+          openSeries(it);
+        } else {
+          openItem(it);
+        }
+      };
+      body.appendChild(b);
+    });
+  } catch (e) {
+    if (seq !== gpSeq) return;
+    gpClear();
+    body.appendChild(el("div", "gmsg", "تعذر التحميل: " + e.message));
+  }
+}
+
+function openGp() {
+  $("#gp").classList.add("on");
+  showGpCats();
+  if (uiTimer) { clearTimeout(uiTimer); uiTimer = null; }
+}
+function closeGp() {
+  gpSeq++;
+  $("#gp").classList.remove("on");
+}
+
+$("#mnu").onclick = function () {
+  if ($("#gp").classList.contains("on")) closeGp();
+  else openGp();
+};
+$("#gpclose").onclick = closeGp;
+$("#gpback").onclick = showGpCats;
+
 // ---------- player ----------
 function fmt(t) {
   if (!isFinite(t) || t < 0) return "0:00";
@@ -780,6 +883,7 @@ function closePlayer() {
   stopTimers();
   cur = null;
   killPlayer();
+  closeGp();
   setFull(false);
   $("#pl").classList.remove("on");
 }
@@ -986,19 +1090,6 @@ $("#vol").addEventListener("input", function () {
   if (v.volume > 0) v.muted = false;
 });
 
-$("#au").onclick = function () {
-  const at = v.audioTracks;
-  if (!at || at.length < 2) {
-    $("#perr").textContent = "لا توجد مسارات صوت أخرى في هذا البث";
-    return;
-  }
-  let idx = 0;
-  for (let i = 0; i < at.length; i++) if (at[i].enabled) idx = i;
-  const nx = (idx + 1) % at.length;
-  for (let j = 0; j < at.length; j++) at[j].enabled = j === nx;
-  $("#perr").textContent = "مسار الصوت: " + (at[nx].label || at[nx].language || String(nx + 1));
-};
-
 // ---------- video size ----------
 function layoutSize() {
   const m = SIZES[szIdx];
@@ -1041,7 +1132,9 @@ function showUi() {
   const p = $("#pl");
   p.classList.add("ui");
   if (uiTimer) clearTimeout(uiTimer);
-  uiTimer = setTimeout(function () { p.classList.remove("ui"); }, 3500);
+  uiTimer = setTimeout(function () {
+    if (!$("#gp").classList.contains("on")) p.classList.remove("ui");
+  }, 3500);
 }
 function hideUi() {
   if (uiTimer) { clearTimeout(uiTimer); uiTimer = null; }
@@ -1230,8 +1323,6 @@ gest.addEventListener("pointerup", function (e) {
   tap();
 });
 gest.addEventListener("pointercancel", function () { g = null; });
-
-$("#fs").onclick = toggleFull;
 
 // ---------- VLC ----------
 function freeConnection() {
