@@ -77,7 +77,7 @@ video{width:100%;height:100%;background:#000;object-fit:contain}
 .cb.danger{border-color:#7a2a3a;color:#ff9a9a}
 #vol{width:90px;accent-color:#d4af37}
 #perr{color:#f1d77a;font-size:13px;padding:6px 12px;background:#050a1c;word-break:break-word;min-height:22px}
-#gp{position:absolute;top:0;bottom:0;left:0;width:min(62%,290px);background:rgba(5,10,28,.28);z-index:20;display:none;flex-direction:column;direction:rtl}
+#gp{position:absolute;top:0;bottom:0;right:0;left:auto;width:min(62%,290px);background:rgba(5,10,28,.28);z-index:20;display:none;flex-direction:column;direction:rtl}
 #gp.on{display:flex}
 #gph{display:flex;align-items:center;gap:6px;padding:8px;background:rgba(5,10,28,.45)}
 #gptabs{flex:1;display:flex;gap:6px}
@@ -86,9 +86,12 @@ video{width:100%;height:100%;background:#000;object-fit:contain}
 #gpx{background:rgba(58,20,32,.7);border:1px solid #7a2a3a;border-radius:10px;padding:8px 11px;color:#ff9a9a}
 #gpt{padding:6px 10px;font-size:12px;color:#f1d77a;background:rgba(5,10,28,.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #gpb{overflow-y:auto;padding:8px;flex:1}
-.gi{display:block;width:100%;text-align:start;background:rgba(14,24,56,.55);border:1px solid rgba(37,52,107,.8);border-radius:10px;padding:10px;margin-bottom:6px;font-size:13px;color:#fff;text-shadow:0 1px 2px #000}
+.gi{display:flex;align-items:center;gap:8px;width:100%;text-align:start;background:rgba(14,24,56,.55);border:1px solid rgba(37,52,107,.8);border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:13px;color:#fff;text-shadow:0 1px 2px #000}
 .gi.on{border-color:#d4af37;color:#f1d77a}
 .gi:active{border-color:#d4af37}
+.gi .gl{flex:none;width:38px;height:38px;border-radius:8px;background:rgba(7,13,38,.6);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.gi .gl img{width:100%;height:100%;object-fit:contain}
+.gi .gn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.3}
 .gh{font-size:12px;color:#d4af37;padding:6px 4px;text-shadow:0 1px 2px #000}
 .gmsg{text-align:center;color:#f1d77a;padding:20px;font-size:13px;text-shadow:0 1px 2px #000}
 #pl.full{padding:0}
@@ -810,6 +813,24 @@ function gpClear() {
   $("#gpb").innerHTML = "";
 }
 
+// one row of the panel: optional logo + name
+function giBtn(name, logo, on, withLogo) {
+  const b = el("button", "gi" + (on ? " on" : ""));
+  if (withLogo) {
+    const box = el("div", "gl");
+    if (logo) {
+      const im = document.createElement("img");
+      im.loading = "lazy";
+      im.src = logo;
+      im.onerror = function () { im.style.visibility = "hidden"; };
+      box.appendChild(im);
+    }
+    b.appendChild(box);
+  }
+  b.appendChild(el("span", "gn", name));
+  return b;
+}
+
 function setTabs() {
   const hasEps = type === "series" && ctx.seasons && ctx.seasons.length > 0;
   $("#tEps").classList.toggle("hide", !hasEps);
@@ -827,7 +848,7 @@ function renderGp() {
     $("#gpt").textContent = "المجموعات";
     if (!cats.length) { body.appendChild(el("div", "gmsg", "لا توجد مجموعات")); return; }
     cats.forEach(function (c) {
-      const b = el("button", "gi" + (c.id === gpCat ? " on" : ""), c.name);
+      const b = giBtn(c.name, "", c.id === gpCat, false);
       b.onclick = function () { gpCat = c.id; gpMode = "list"; renderGp(); };
       body.appendChild(b);
     });
@@ -843,8 +864,8 @@ function renderGp() {
       if (seasons.length > 1) body.appendChild(el("div", "gh", s.name));
       s.list.forEach(function (ep) {
         const title = ep.title || ("حلقة " + ep.episode_num);
-        const on = cur && cur.epId === String(ep.id);
-        const b = el("button", "gi" + (on ? " on" : ""), title);
+        const on = !!(cur && cur.epId === String(ep.id));
+        const b = giBtn(title, "", on, false);
         if (on) target = b;
         b.onclick = function () {
           closeGp();
@@ -856,7 +877,7 @@ function renderGp() {
     if (target) { try { target.scrollIntoView({ block: "center" }); } catch (e) {} }
     return;
   }
-  // list mode: items of the group
+  // list mode: items of the group, with logos
   $("#gpt").textContent = catName(gpCat) || "القائمة";
   body.appendChild(el("div", "gmsg", "جاري التحميل..."));
   call({ action: itemAction(), category_id: gpCat }).then(function (raw) {
@@ -870,7 +891,7 @@ function renderGp() {
       let on = false;
       if (type === "series") on = !!(ctx.series && ctx.series.id === it.id);
       else on = !!(cur && cur.title === it.name);
-      const b = el("button", "gi" + (on ? " on" : ""), it.name);
+      const b = giBtn(it.name, it.logo, on, true);
       if (on) target = b;
       b.onclick = function () {
         if (type === "series") {
