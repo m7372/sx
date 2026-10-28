@@ -77,15 +77,20 @@ video{width:100%;height:100%;background:#000;object-fit:contain}
 .cb.danger{border-color:#7a2a3a;color:#ff9a9a}
 #vol{width:90px;accent-color:#d4af37}
 #perr{color:#f1d77a;font-size:13px;padding:6px 12px;background:#050a1c;word-break:break-word;min-height:22px}
-#gp{position:absolute;top:0;bottom:0;right:0;width:min(88%,380px);background:#070d26;border-left:1px solid #25346b;z-index:20;display:none;flex-direction:column}
+#gp{position:absolute;top:0;bottom:0;left:0;width:min(62%,290px);background:rgba(5,10,28,.28);z-index:20;display:none;flex-direction:column;direction:rtl}
 #gp.on{display:flex}
-#gph{display:flex;align-items:center;gap:8px;padding:12px;border-bottom:1px solid #25346b;background:#050a1c}
-#gpt{flex:1;font-size:15px;color:#f1d77a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#gpb{overflow-y:auto;padding:10px;flex:1}
-.gi{display:block;width:100%;text-align:start;background:#0e1838;border:1px solid #25346b;border-radius:10px;padding:12px;margin-bottom:8px;font-size:14px}
+#gph{display:flex;align-items:center;gap:6px;padding:8px;background:rgba(5,10,28,.45)}
+#gptabs{flex:1;display:flex;gap:6px}
+.gtab{flex:1;padding:8px 4px;border-radius:10px;background:rgba(14,24,56,.6);border:1px solid rgba(43,59,120,.8);font-size:12px;color:#f1d77a;white-space:nowrap}
+.gtab.on{background:rgba(212,175,55,.9);color:#0a1230;font-weight:700;border-color:#d4af37}
+#gpx{background:rgba(58,20,32,.7);border:1px solid #7a2a3a;border-radius:10px;padding:8px 11px;color:#ff9a9a}
+#gpt{padding:6px 10px;font-size:12px;color:#f1d77a;background:rgba(5,10,28,.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#gpb{overflow-y:auto;padding:8px;flex:1}
+.gi{display:block;width:100%;text-align:start;background:rgba(14,24,56,.55);border:1px solid rgba(37,52,107,.8);border-radius:10px;padding:10px;margin-bottom:6px;font-size:13px;color:#fff;text-shadow:0 1px 2px #000}
 .gi.on{border-color:#d4af37;color:#f1d77a}
 .gi:active{border-color:#d4af37}
-.gmsg{text-align:center;color:#9aa8dc;padding:20px;font-size:14px}
+.gh{font-size:12px;color:#d4af37;padding:6px 4px;text-shadow:0 1px 2px #000}
+.gmsg{text-align:center;color:#f1d77a;padding:20px;font-size:13px;text-shadow:0 1px 2px #000}
 #pl.full{padding:0}
 #pl.full #pbar{position:absolute;top:0;left:0;right:0;z-index:5;background:linear-gradient(rgba(5,10,28,.9),rgba(5,10,28,0));border:0;padding-top:10px;display:none}
 #pl.full.ui #pbar{display:flex}
@@ -147,6 +152,18 @@ video{width:100%;height:100%;background:#000;object-fit:contain}
     <video id="v" playsinline></video>
     <div id="gest"></div>
     <div id="hud"></div>
+    <div id="gp">
+      <div id="gph">
+        <div id="gptabs">
+          <button class="gtab hide" id="tEps">☰ الحلقات</button>
+          <button class="gtab" id="tList">≡ القائمة</button>
+          <button class="gtab" id="tCats">▦ المجموعات</button>
+        </div>
+        <button id="gpx">✕</button>
+      </div>
+      <div id="gpt"></div>
+      <div id="gpb"></div>
+    </div>
   </div>
   <div id="perr"></div>
   <div id="ctl">
@@ -161,14 +178,6 @@ video{width:100%;height:100%;background:#000;object-fit:contain}
       <button class="cb" id="bk">-10</button>
       <button class="cb danger" id="pclose">إغلاق</button>
     </div>
-  </div>
-  <div id="gp">
-    <div id="gph">
-      <button class="btn alt hide" id="gpback">رجوع</button>
-      <div id="gpt">المجموعات</div>
-      <button class="btn alt" id="gpclose">✕</button>
-    </div>
-    <div id="gpb"></div>
   </div>
 </div>
 
@@ -206,7 +215,9 @@ let searchTimer = null;
 let searchMode = false;
 let szIdx = 0;
 let gpSeq = 0;
-let gpCur = null;
+let gpMode = "list";
+let gpCat = null;
+let ctx = { cat: null, series: null, seasons: null };
 const SIZES = [
   { k: "contain", n: "ملائم" },
   { k: "cover", n: "ملء" },
@@ -694,12 +705,36 @@ function streamUrl(kind, id, ext) {
 
 function openItem(it) {
   if (type === "live") {
+    ctx = { cat: it.cat || curCat, series: null, seasons: null };
     play(streamUrl("live", it.id, "m3u8"), it.name, "live", directUrl("live", it.id, "m3u8"), streamUrl("live", it.id, "ts"));
   } else if (type === "vod") {
+    ctx = { cat: it.cat || curCat, series: null, seasons: null };
     play(streamUrl("movie", it.id, it.ext), it.name, "vod", directUrl("movie", it.id, it.ext), "");
   } else {
     openSeries(it);
   }
+}
+
+async function fetchSeasons(it) {
+  const info = await call({ action: "get_series_info", series_id: it.id });
+  const eps = (info && info.episodes) || {};
+  let seasons = [];
+  if (Array.isArray(eps)) {
+    seasons = [{ name: "الحلقات", list: eps }];
+  } else {
+    Object.keys(eps).forEach(function (k) {
+      seasons.push({ name: "الموسم " + k, list: eps[k] || [] });
+    });
+  }
+  return seasons;
+}
+
+function playEp(it, seasons, s, ep) {
+  const title = ep.title || ("حلقة " + ep.episode_num);
+  const ext = ep.container_extension || "mkv";
+  ctx = { cat: it.cat || curCat, series: it, seasons: seasons };
+  play(streamUrl("series", ep.id, ext), it.name + " - " + s.name + " - " + title, "series", directUrl("series", ep.id, ext), "");
+  cur.epId = String(ep.id);
 }
 
 async function openSeries(it) {
@@ -707,16 +742,7 @@ async function openSeries(it) {
   grid.innerHTML = "";
   grid.appendChild(el("div", "msg", "جاري التحميل..."));
   try {
-    const info = await call({ action: "get_series_info", series_id: it.id });
-    const eps = (info && info.episodes) || {};
-    let seasons = [];
-    if (Array.isArray(eps)) {
-      seasons = [{ name: "الحلقات", list: eps }];
-    } else {
-      Object.keys(eps).forEach(function (k) {
-        seasons.push({ name: "الموسم " + k, list: eps[k] || [] });
-      });
-    }
+    const seasons = await fetchSeasons(it);
     const wasSearch = searchMode;
     const q = $("#q").value.trim();
     backFn = function () {
@@ -735,7 +761,7 @@ function showSeasons(it, seasons, wasSearch, q) {
   const grid = $("#grid");
   grid.innerHTML = "";
   if (!seasons.length) { grid.appendChild(el("div", "msg", "لا توجد مواسم")); return; }
-  if (seasons.length === 1) { showEpisodes(it, seasons[0]); return; }
+  if (seasons.length === 1) { showEpisodes(it, seasons, seasons[0]); return; }
   const toList = function () {
     backFn = null;
     if (wasSearch && q.length >= 2) runSearch(q);
@@ -746,23 +772,20 @@ function showSeasons(it, seasons, wasSearch, q) {
     b.appendChild(el("p", "", s.name));
     b.onclick = function () {
       backFn = function () { showSeasons(it, seasons, wasSearch, q); backFn = toList; };
-      showEpisodes(it, s);
+      showEpisodes(it, seasons, s);
     };
     grid.appendChild(b);
   });
 }
 
-function showEpisodes(it, s) {
+function showEpisodes(it, seasons, s) {
   const grid = $("#grid");
   grid.innerHTML = "";
   s.list.forEach(function (ep) {
     const b = el("button", "card");
     const title = ep.title || ("حلقة " + ep.episode_num);
     b.appendChild(el("p", "", s.name + " - " + title));
-    b.onclick = function () {
-      const ext = ep.container_extension || "mkv";
-      play(streamUrl("series", ep.id, ext), it.name + " - " + s.name + " - " + title, "series", directUrl("series", ep.id, ext), "");
-    };
+    b.onclick = function () { playEp(it, seasons, s, ep); };
     grid.appendChild(b);
   });
 }
@@ -777,71 +800,115 @@ $("#back").onclick = function () {
   if (curCat) loadItems(curCat);
 };
 
-// ---------- groups panel inside the player ----------
+// ---------- side panel inside the player (transparent) ----------
+function catName(id) {
+  for (let i = 0; i < allCats.length; i++) if (allCats[i].id === id) return allCats[i].name;
+  return "";
+}
+
 function gpClear() {
   $("#gpb").innerHTML = "";
 }
 
-function showGpCats() {
-  gpSeq++;
-  gpCur = null;
-  $("#gpt").textContent = "المجموعات";
-  $("#gpback").classList.add("hide");
-  const body = $("#gpb");
-  gpClear();
-  if (!cats.length) {
-    body.appendChild(el("div", "gmsg", "لا توجد مجموعات"));
-    return;
-  }
-  cats.forEach(function (c) {
-    const b = el("button", "gi" + (c.id === curCat ? " on" : ""), c.name);
-    b.onclick = function () { showGpItems(c); };
-    body.appendChild(b);
-  });
+function setTabs() {
+  const hasEps = type === "series" && ctx.seasons && ctx.seasons.length > 0;
+  $("#tEps").classList.toggle("hide", !hasEps);
+  $("#tEps").classList.toggle("on", gpMode === "eps");
+  $("#tList").classList.toggle("on", gpMode === "list");
+  $("#tCats").classList.toggle("on", gpMode === "cats");
 }
 
-async function showGpItems(c) {
+function renderGp() {
   const seq = ++gpSeq;
-  gpCur = c;
-  $("#gpt").textContent = c.name;
-  $("#gpback").classList.remove("hide");
+  setTabs();
   const body = $("#gpb");
   gpClear();
+  if (gpMode === "cats") {
+    $("#gpt").textContent = "المجموعات";
+    if (!cats.length) { body.appendChild(el("div", "gmsg", "لا توجد مجموعات")); return; }
+    cats.forEach(function (c) {
+      const b = el("button", "gi" + (c.id === gpCat ? " on" : ""), c.name);
+      b.onclick = function () { gpCat = c.id; gpMode = "list"; renderGp(); };
+      body.appendChild(b);
+    });
+    return;
+  }
+  if (gpMode === "eps") {
+    const sr = ctx.series ? ctx.series.name : "";
+    $("#gpt").textContent = sr;
+    const seasons = ctx.seasons || [];
+    if (!seasons.length) { body.appendChild(el("div", "gmsg", "لا توجد حلقات")); return; }
+    let target = null;
+    seasons.forEach(function (s) {
+      if (seasons.length > 1) body.appendChild(el("div", "gh", s.name));
+      s.list.forEach(function (ep) {
+        const title = ep.title || ("حلقة " + ep.episode_num);
+        const on = cur && cur.epId === String(ep.id);
+        const b = el("button", "gi" + (on ? " on" : ""), title);
+        if (on) target = b;
+        b.onclick = function () {
+          closeGp();
+          playEp(ctx.series, seasons, s, ep);
+        };
+        body.appendChild(b);
+      });
+    });
+    if (target) { try { target.scrollIntoView({ block: "center" }); } catch (e) {} }
+    return;
+  }
+  // list mode: items of the group
+  $("#gpt").textContent = catName(gpCat) || "القائمة";
   body.appendChild(el("div", "gmsg", "جاري التحميل..."));
-  try {
-    const raw = await call({ action: itemAction(), category_id: c.id });
+  call({ action: itemAction(), category_id: gpCat }).then(function (raw) {
     if (seq !== gpSeq) return;
     let list = (Array.isArray(raw) ? raw : []).map(normItem);
     if (cfg.ad) list = list.filter(function (x) { return !isAdult(x.name); });
     gpClear();
-    if (!list.length) {
-      body.appendChild(el("div", "gmsg", "لا توجد عناصر"));
-      return;
-    }
+    if (!list.length) { body.appendChild(el("div", "gmsg", "لا توجد عناصر")); return; }
+    let target = null;
     list.forEach(function (it) {
-      const on = cur && cur.title === it.name;
+      let on = false;
+      if (type === "series") on = !!(ctx.series && ctx.series.id === it.id);
+      else on = !!(cur && cur.title === it.name);
       const b = el("button", "gi" + (on ? " on" : ""), it.name);
+      if (on) target = b;
       b.onclick = function () {
-        closeGp();
         if (type === "series") {
-          closePlayer();
-          openSeries(it);
+          gpClear();
+          body.appendChild(el("div", "gmsg", "جاري التحميل..."));
+          const s2 = ++gpSeq;
+          fetchSeasons(it).then(function (seasons) {
+            if (s2 !== gpSeq) return;
+            ctx = { cat: it.cat || gpCat, series: it, seasons: seasons };
+            gpMode = "eps";
+            renderGp();
+          }).catch(function (e) {
+            if (s2 !== gpSeq) return;
+            gpClear();
+            body.appendChild(el("div", "gmsg", "تعذر التحميل: " + e.message));
+          });
         } else {
+          closeGp();
+          it.cat = it.cat || gpCat;
           openItem(it);
         }
       };
       body.appendChild(b);
     });
-  } catch (e) {
+    if (target) { try { target.scrollIntoView({ block: "center" }); } catch (e) {} }
+  }).catch(function (e) {
     if (seq !== gpSeq) return;
     gpClear();
     body.appendChild(el("div", "gmsg", "تعذر التحميل: " + e.message));
-  }
+  });
 }
 
 function openGp() {
+  gpCat = ctx.cat || curCat;
+  const hasEps = type === "series" && ctx.seasons && ctx.seasons.length > 0;
+  gpMode = hasEps ? "eps" : "list";
   $("#gp").classList.add("on");
-  showGpCats();
+  renderGp();
   if (uiTimer) { clearTimeout(uiTimer); uiTimer = null; }
 }
 function closeGp() {
@@ -853,8 +920,10 @@ $("#mnu").onclick = function () {
   if ($("#gp").classList.contains("on")) closeGp();
   else openGp();
 };
-$("#gpclose").onclick = closeGp;
-$("#gpback").onclick = showGpCats;
+$("#gpx").onclick = closeGp;
+$("#tEps").onclick = function () { gpMode = "eps"; renderGp(); };
+$("#tList").onclick = function () { gpMode = "list"; renderGp(); };
+$("#tCats").onclick = function () { gpMode = "cats"; renderGp(); };
 
 // ---------- player ----------
 function fmt(t) {
@@ -1003,7 +1072,7 @@ function watchdog() {
 
 function play(url, title, kind, direct, tsUrl) {
   stopTimers();
-  cur = { url: url, kind: kind, auto: kind === "live", direct: direct || "", title: title, tsUrl: tsUrl || "", mode: kind === "live" ? "hls" : "" };
+  cur = { url: url, kind: kind, auto: kind === "live", direct: direct || "", title: title, tsUrl: tsUrl || "", mode: kind === "live" ? "hls" : "", epId: "" };
   retries = 0;
   lastT = -1;
   lastChange = Date.now();
