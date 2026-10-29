@@ -13,6 +13,9 @@ body{background:linear-gradient(160deg,#050a1c,#0b1640);background-attachment:fi
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 input[type=text],input[type=password]{font:inherit;color:#fff;background:#0a1230;border:1px solid #2b3b78;border-radius:10px;padding:12px;width:100%;direction:ltr;text-align:start}
 input[type=text]:focus,input[type=password]:focus{outline:1px solid #d4af37}
+.pw{position:relative}
+.pw input{padding-right:70px}
+.eye{position:absolute;top:6px;bottom:6px;right:6px;background:#12204a;border:1px solid #2b3b78;border-radius:8px;padding:0 10px;font-size:13px;color:#f1d77a}
 .wrap{max-width:980px;margin:0 auto;padding:14px}
 .logo{font-weight:800;letter-spacing:1px;color:#d4af37}
 h1{font-size:22px;text-align:center;margin:10px 0 16px}
@@ -116,7 +119,10 @@ video{width:100%;height:100%;background:#000;object-fit:contain}
     <label>اليوزر</label>
     <input type="text" id="usr" autocomplete="off">
     <label>الباسورد</label>
-    <input type="password" id="pwd" autocomplete="off">
+    <div class="pw">
+      <input type="password" id="pwd" autocomplete="off">
+      <button type="button" class="eye" id="eye">إظهار</button>
+    </div>
     <div class="chk"><input type="checkbox" id="fAr" checked><span>عربي فقط</span></div>
     <div class="chk"><input type="checkbox" id="fAd" checked><span>حجب المحتوى الإباحي</span></div>
     <button class="btn" id="go">اتصال</button>
@@ -400,6 +406,15 @@ function renderSaved() {
   });
 }
 
+// ---------- show / hide password ----------
+function setPwdVisible(on) {
+  $("#pwd").type = on ? "text" : "password";
+  $("#eye").textContent = on ? "إخفاء" : "إظهار";
+}
+$("#eye").onclick = function () {
+  setPwdVisible($("#pwd").type === "password");
+};
+
 // ---------- login ----------
 function loadLast() {
   try {
@@ -457,6 +472,7 @@ $("#go").onclick = async function () {
 
 $("#out").onclick = function () {
   closePlayer();
+  setPwdVisible(false);
   renderSaved();
   $("#app").classList.add("hide");
   $("#login").classList.remove("hide");
