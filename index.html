@@ -5,14 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#050a1c">
 <title>AlameeereSX</title>
-<script src="https://cdn.jsdelivr.net/npm/mpegts.js@1.7.3/dist/mpegts.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
+<script async src="https://cdn.jsdelivr.net/npm/mpegts.js@1.7.3/dist/mpegts.min.js"></script>
+<script async src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{background:linear-gradient(160deg,#050a1c,#0b1640);background-attachment:fixed;color:#eef0ff;font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;min-height:100vh}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 input[type=text],input[type=password]{font:inherit;color:#fff;background:#0a1230;border:1px solid #2b3b78;border-radius:10px;padding:12px;width:100%;direction:ltr;text-align:start}
 input[type=text]:focus,input[type=password]:focus{outline:1px solid #d4af37}
+input[type=checkbox]{width:22px;height:22px;accent-color:#d4af37}
 .pw{position:relative}
 .pw input{padding-right:70px}
 .eye{position:absolute;top:6px;bottom:6px;right:6px;background:#12204a;border:1px solid #2b3b78;border-radius:8px;padding:0 10px;font-size:13px;color:#f1d77a}
@@ -39,12 +40,12 @@ h1{font-size:22px;text-align:center;margin:10px 0 16px}
 .tab.on{background:#d4af37;color:#0a1230;font-weight:700;border-color:#d4af37}
 .row2{display:flex;gap:8px;margin-bottom:10px}
 .row2 input{direction:rtl}
-#cats{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:8px}
+#cats{display:flex;gap:6px;overflow-x:auto;padding:4px 4px 10px;margin-bottom:8px}
 .cat{flex:none;padding:8px 12px;border-radius:999px;background:#0e1838;border:1px solid #25346b;font-size:13px;white-space:nowrap}
 .cat.on{background:#1a2a5c;border-color:#d4af37;color:#f1d77a}
 .cat.sp{border-color:#d4af37;color:#d4af37;font-weight:700}
 .cat.sp.on{background:#d4af37;color:#0a1230}
-#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;padding:4px}
 .card{background:#0e1838;border:1px solid #25346b;border-radius:10px;overflow:hidden;text-align:start;display:block;width:100%}
 .card:active{border-color:#d4af37}
 .ph{width:100%;aspect-ratio:2/3;background:#070d26;display:flex;align-items:center;justify-content:center}
@@ -105,6 +106,20 @@ video{width:100%;height:100%;background:#000;object-fit:contain}
 #pl.full #perr{position:absolute;top:56px;left:0;right:0;z-index:4;background:transparent;text-align:center;pointer-events:none}
 #pl.rot{inset:auto;top:0;left:0;transform-origin:0 0;transform:rotate(90deg) translateY(-100%)}
 .hide{display:none!important}
+body.kb button:focus,body.kb input:focus{outline:3px solid #f1d77a;outline-offset:2px}
+body.kb .card:focus{border-color:#f1d77a;transform:scale(1.05);position:relative;z-index:3}
+body.kb .gi:focus{border-color:#f1d77a;background:rgba(212,175,55,.35)}
+@media (min-width:1200px){
+.wrap{max-width:1500px}
+#grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.card p{font-size:15px;padding:9px}
+.tab{font-size:18px;padding:14px 6px}
+.cat{font-size:16px;padding:10px 16px}
+.cb{font-size:17px;padding:12px 18px}
+.gi{font-size:15px}
+.gtab{font-size:14px}
+#pt{font-size:17px}
+}
 </style>
 </head>
 <body>
@@ -125,7 +140,7 @@ video{width:100%;height:100%;background:#000;object-fit:contain}
     </div>
     <div class="chk"><input type="checkbox" id="fAr" checked><span>عربي فقط</span></div>
     <div class="chk"><input type="checkbox" id="fAd" checked><span>حجب المحتوى الإباحي</span></div>
-    <button class="btn" id="go">اتصال</button>
+    <button type="button" class="btn" id="go">اتصال</button>
     <div class="err" id="lerr"></div>
     <div class="saved" id="savedBox"></div>
   </div>
@@ -137,14 +152,14 @@ video{width:100%;height:100%;background:#000;object-fit:contain}
       <div class="stat"><small>الاتصالات</small><b id="sCon">-</b></div>
     </div>
     <div class="tabs">
-      <button class="tab on" data-t="live">قنوات</button>
-      <button class="tab" data-t="vod">أفلام</button>
-      <button class="tab" data-t="series">مسلسلات</button>
+      <button type="button" class="tab on" data-t="live">قنوات</button>
+      <button type="button" class="tab" data-t="vod">أفلام</button>
+      <button type="button" class="tab" data-t="series">مسلسلات</button>
     </div>
     <div class="row2">
       <input type="text" id="q" placeholder="بحث في كل الأقسام..." autocomplete="off">
-      <button class="btn alt" id="back">رجوع</button>
-      <button class="btn alt" id="out">خروج</button>
+      <button type="button" class="btn alt" id="back">رجوع</button>
+      <button type="button" class="btn alt" id="out">خروج</button>
     </div>
     <div id="cats"></div>
     <div id="grid"></div>
@@ -153,7 +168,7 @@ video{width:100%;height:100%;background:#000;object-fit:contain}
 
 <div id="pl">
   <div id="pbar">
-    <button id="mnu"><span></span><span></span><span></span></button>
+    <button type="button" id="mnu"><span></span><span></span><span></span></button>
     <div id="pt"></div>
     <span class="logo">AlameeereSX</span>
   </div>
@@ -164,11 +179,11 @@ video{width:100%;height:100%;background:#000;object-fit:contain}
     <div id="gp">
       <div id="gph">
         <div id="gptabs">
-          <button class="gtab hide" id="tEps">☰ الحلقات</button>
-          <button class="gtab" id="tList">≡ القائمة</button>
-          <button class="gtab" id="tCats">▦ المجموعات</button>
+          <button type="button" class="gtab hide" id="tEps">☰ الحلقات</button>
+          <button type="button" class="gtab" id="tList">≡ القائمة</button>
+          <button type="button" class="gtab" id="tCats">▦ المجموعات</button>
         </div>
-        <button id="gpx">✕</button>
+        <button type="button" id="gpx">✕</button>
       </div>
       <div id="gpt"></div>
       <div id="gpb"></div>
@@ -178,14 +193,15 @@ video{width:100%;height:100%;background:#000;object-fit:contain}
   <div id="ctl">
     <div id="sr"><span id="tm">0:00</span><input type="range" id="seek" min="0" max="1000" value="0"></div>
     <div id="br">
-      <button class="cb ext" id="vlc">VLC</button>
-      <button class="cb ext" id="sz">الحجم: ملائم</button>
-      <button class="cb" id="mu">كتم</button>
+      <button type="button" class="cb ext" id="vlc">VLC</button>
+      <button type="button" class="cb ext" id="sz">الحجم: ملائم</button>
+      <button type="button" class="cb hide" id="fs">ملء الشاشة</button>
+      <button type="button" class="cb" id="mu">كتم</button>
       <input type="range" id="vol" min="0" max="100" value="100">
-      <button class="cb" id="fw">+10</button>
-      <button class="cb big" id="pp">❚❚</button>
-      <button class="cb" id="bk">-10</button>
-      <button class="cb danger" id="pclose">إغلاق</button>
+      <button type="button" class="cb" id="fw">+10</button>
+      <button type="button" class="cb big" id="pp">❚❚</button>
+      <button type="button" class="cb" id="bk">-10</button>
+      <button type="button" class="cb danger" id="pclose">إغلاق</button>
     </div>
   </div>
 </div>
@@ -227,6 +243,9 @@ let gpSeq = 0;
 let gpMode = "list";
 let gpCat = null;
 let ctx = { cat: null, series: null, seasons: null };
+let connecting = false;
+let histOn = false;
+let lastFocus = null;
 const SIZES = [
   { k: "contain", n: "ملائم" },
   { k: "cover", n: "ملء" },
@@ -235,6 +254,13 @@ const SIZES = [
   { k: "ratio", n: "4:3", r: 4 / 3 }
 ];
 const v = $("#v");
+
+// any page error is shown on screen instead of failing silently
+window.addEventListener("error", function (ev) {
+  const m = "خطأ في الصفحة: " + (ev && ev.message ? ev.message : "");
+  if (!$("#login").classList.contains("hide")) $("#lerr").textContent = m;
+  else $("#perr").textContent = m;
+});
 
 function el(tag, cls, text) {
   const e = document.createElement(tag);
@@ -341,17 +367,26 @@ function normText(s) {
   return out;
 }
 
-// ---------- api ----------
+// ---------- api (with a time limit so it never hangs silently) ----------
 async function call(params) {
   const u = new URL(API + "/api");
   u.searchParams.set("server", cfg.server);
   u.searchParams.set("username", cfg.user);
   u.searchParams.set("password", cfg.pass);
   Object.keys(params).forEach(function (k) { u.searchParams.set(k, params[k]); });
-  const r = await fetch(u.toString());
-  const j = await r.json();
-  if (j && j.error && !j.user_info) throw new Error(j.error);
-  return j;
+  const ctl = window.AbortController ? new AbortController() : null;
+  const to = setTimeout(function () { if (ctl) ctl.abort(); }, 30000);
+  try {
+    const r = await fetch(u.toString(), ctl ? { signal: ctl.signal } : {});
+    const j = await r.json();
+    if (j && j.error && !j.user_info) throw new Error(j.error);
+    return j;
+  } catch (e) {
+    if (e && e.name === "AbortError") throw new Error("انتهت مهلة الاتصال");
+    throw e;
+  } finally {
+    clearTimeout(to);
+  }
 }
 
 // ---------- saved accounts ----------
@@ -362,7 +397,7 @@ function getSaved() {
   } catch (e) { return []; }
 }
 function putSaved(a) {
-  localStorage.setItem("sx_saved", JSON.stringify(a));
+  try { localStorage.setItem("sx_saved", JSON.stringify(a)); } catch (e) {}
 }
 function hostOf(p) {
   try {
@@ -389,13 +424,16 @@ function renderSaved() {
     const row = el("div", "sv");
     const label = (x.name ? x.name + "  |  " : "") + hostOf(x.server) + "  |  " + x.user;
     const pick = el("button", "pick", label);
+    pick.type = "button";
     pick.onclick = function () {
       $("#nm").value = x.name || "";
       $("#srv").value = x.server;
       $("#usr").value = x.user;
       $("#pwd").value = x.pass;
+      try { $("#go").focus(); } catch (e) {}
     };
     const del = el("button", "del", "حذف");
+    del.type = "button";
     del.onclick = function () {
       putSaved(getSaved().filter(function (y) { return !sameAcc(y, x); }));
       renderSaved();
@@ -438,25 +476,30 @@ function fmtDate(sec) {
   return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
 }
 
-$("#go").onclick = async function () {
+async function doConnect() {
+  if (connecting) return;
+  connecting = true;
   $("#lerr").textContent = "";
-  const server = $("#srv").value.trim();
-  const user = $("#usr").value.trim();
-  const pass = $("#pwd").value;
-  if (!server || !user || !pass) { $("#lerr").textContent = "أدخل السيرفر واليوزر والباسورد"; return; }
-  cfg = { name: $("#nm").value.trim(), server: server, user: user, pass: pass, ar: $("#fAr").checked, ad: $("#fAd").checked };
-  allCache = {};
-  searchMode = false;
-  searchSeq++;
-  $("#q").value = "";
-  $("#go").textContent = "جاري الاتصال...";
   try {
+    const server = $("#srv").value.trim();
+    const user = $("#usr").value.trim();
+    const pass = $("#pwd").value;
+    if (!server || !user || !pass) {
+      $("#lerr").textContent = "أدخل السيرفر واليوزر والباسورد";
+      return;
+    }
+    cfg = { name: $("#nm").value.trim(), server: server, user: user, pass: pass, ar: $("#fAr").checked, ad: $("#fAd").checked };
+    allCache = {};
+    searchMode = false;
+    searchSeq++;
+    $("#q").value = "";
+    $("#go").textContent = "جاري الاتصال...";
     const info = await call({});
     const ui = info && info.user_info;
     if (!ui || String(ui.auth) !== "1") {
       throw new Error("الحساب غير صالح أو اليوزر والباسورد غير صحيحين");
     }
-    localStorage.setItem("sx_last", JSON.stringify(cfg));
+    try { localStorage.setItem("sx_last", JSON.stringify(cfg)); } catch (e) {}
     saveEntry({ name: cfg.name, server: server, user: user, pass: pass });
     $("#sSt").textContent = String(ui.status || "-");
     $("#sExp").textContent = fmtDate(ui.exp_date);
@@ -464,11 +507,18 @@ $("#go").onclick = async function () {
     $("#login").classList.add("hide");
     $("#app").classList.remove("hide");
     loadCats();
+    setTimeout(function () {
+      const t = document.querySelector(".tab.on");
+      if (t) { try { t.focus(); } catch (e) {} }
+    }, 400);
   } catch (e) {
-    $("#lerr").textContent = "تعذر الاتصال: " + e.message;
+    $("#lerr").textContent = "تعذر الاتصال: " + (e && e.message ? e.message : String(e));
+  } finally {
+    connecting = false;
+    $("#go").textContent = "اتصال";
   }
-  $("#go").textContent = "اتصال";
-};
+}
+$("#go").onclick = doConnect;
 
 $("#out").onclick = function () {
   closePlayer();
@@ -476,6 +526,10 @@ $("#out").onclick = function () {
   renderSaved();
   $("#app").classList.add("hide");
   $("#login").classList.remove("hide");
+  setTimeout(function () {
+    const p = document.querySelector(".pick");
+    try { (p || $("#srv")).focus(); } catch (e) {}
+  }, 200);
 };
 
 document.querySelectorAll(".tab").forEach(function (b) {
@@ -546,6 +600,7 @@ function renderCats() {
   const box = $("#cats");
   box.innerHTML = "";
   const sb = el("button", "cat sp" + (sportMode ? " on" : ""), "رياضة");
+  sb.type = "button";
   sb.onclick = function () {
     sportMode = !sportMode;
     searchMode = false;
@@ -563,6 +618,7 @@ function renderCats() {
   box.appendChild(sb);
   cats.forEach(function (c) {
     const b = el("button", "cat" + (c.id === curCat && !searchMode ? " on" : ""), c.name);
+    b.type = "button";
     b.onclick = function () {
       searchSeq++;
       $("#q").value = "";
@@ -610,6 +666,7 @@ function drawList(list, head) {
   if (!list.length) { grid.appendChild(el("div", "msg", "لا توجد نتائج")); return; }
   list.forEach(function (it) {
     const b = el("button", "card" + (type === "live" ? " live" : ""));
+    b.type = "button";
     const ph = el("div", "ph");
     if (it.logo) {
       const im = document.createElement("img");
@@ -788,6 +845,7 @@ function showSeasons(it, seasons, wasSearch, q) {
   };
   seasons.forEach(function (s) {
     const b = el("button", "card");
+    b.type = "button";
     b.appendChild(el("p", "", s.name));
     b.onclick = function () {
       backFn = function () { showSeasons(it, seasons, wasSearch, q); backFn = toList; };
@@ -795,6 +853,7 @@ function showSeasons(it, seasons, wasSearch, q) {
     };
     grid.appendChild(b);
   });
+  focusFirstCard();
 }
 
 function showEpisodes(it, seasons, s) {
@@ -802,11 +861,20 @@ function showEpisodes(it, seasons, s) {
   grid.innerHTML = "";
   s.list.forEach(function (ep) {
     const b = el("button", "card");
+    b.type = "button";
     const title = ep.title || ("حلقة " + ep.episode_num);
     b.appendChild(el("p", "", s.name + " - " + title));
     b.onclick = function () { playEp(it, seasons, s, ep); };
     grid.appendChild(b);
   });
+  focusFirstCard();
+}
+
+// on a remote the focus follows the content (only when a key was used)
+function focusFirstCard() {
+  if (!document.body.classList.contains("kb")) return;
+  const c = document.querySelector("#grid .card");
+  if (c) { try { c.focus(); } catch (e) {} }
 }
 
 $("#back").onclick = function () {
@@ -832,6 +900,7 @@ function gpClear() {
 // one row of the panel: optional logo + name
 function giBtn(name, logo, on, withLogo) {
   const b = el("button", "gi" + (on ? " on" : ""));
+  b.type = "button";
   if (withLogo) {
     const box = el("div", "gl");
     if (logo) {
@@ -855,6 +924,16 @@ function setTabs() {
   $("#tCats").classList.toggle("on", gpMode === "cats");
 }
 
+// put the focus on the current row of the panel (for remote and keyboard)
+function gpFocus() {
+  if (!$("#gp").classList.contains("on")) return;
+  const t = document.querySelector("#gpb .gi.on") || document.querySelector("#gpb .gi") || document.querySelector(".gtab:not(.hide)");
+  if (t) {
+    try { t.focus(); } catch (e) {}
+    try { t.scrollIntoView({ block: "center" }); } catch (e) {}
+  }
+}
+
 function renderGp() {
   const seq = ++gpSeq;
   setTabs();
@@ -868,6 +947,7 @@ function renderGp() {
       b.onclick = function () { gpCat = c.id; gpMode = "list"; renderGp(); };
       body.appendChild(b);
     });
+    gpFocus();
     return;
   }
   if (gpMode === "eps") {
@@ -875,14 +955,12 @@ function renderGp() {
     $("#gpt").textContent = sr;
     const seasons = ctx.seasons || [];
     if (!seasons.length) { body.appendChild(el("div", "gmsg", "لا توجد حلقات")); return; }
-    let target = null;
     seasons.forEach(function (s) {
       if (seasons.length > 1) body.appendChild(el("div", "gh", s.name));
       s.list.forEach(function (ep) {
         const title = ep.title || ("حلقة " + ep.episode_num);
         const on = !!(cur && cur.epId === String(ep.id));
         const b = giBtn(title, "", on, false);
-        if (on) target = b;
         b.onclick = function () {
           closeGp();
           playEp(ctx.series, seasons, s, ep);
@@ -890,7 +968,7 @@ function renderGp() {
         body.appendChild(b);
       });
     });
-    if (target) { try { target.scrollIntoView({ block: "center" }); } catch (e) {} }
+    gpFocus();
     return;
   }
   // list mode: items of the group, with logos
@@ -902,13 +980,11 @@ function renderGp() {
     if (cfg.ad) list = list.filter(function (x) { return !isAdult(x.name); });
     gpClear();
     if (!list.length) { body.appendChild(el("div", "gmsg", "لا توجد عناصر")); return; }
-    let target = null;
     list.forEach(function (it) {
       let on = false;
       if (type === "series") on = !!(ctx.series && ctx.series.id === it.id);
       else on = !!(cur && cur.title === it.name);
       const b = giBtn(it.name, it.logo, on, true);
-      if (on) target = b;
       b.onclick = function () {
         if (type === "series") {
           gpClear();
@@ -932,7 +1008,7 @@ function renderGp() {
       };
       body.appendChild(b);
     });
-    if (target) { try { target.scrollIntoView({ block: "center" }); } catch (e) {} }
+    gpFocus();
   }).catch(function (e) {
     if (seq !== gpSeq) return;
     gpClear();
@@ -985,6 +1061,29 @@ function stopTimers() {
   if (watchTimer) { clearInterval(watchTimer); watchTimer = null; }
 }
 
+// the back button of the remote closes the player instead of leaving the page
+function pushHist() {
+  if (histOn) return;
+  try { history.pushState({ pl: 1 }, ""); histOn = true; } catch (e) {}
+}
+function popHist() {
+  if (!histOn) return;
+  histOn = false;
+  try { history.back(); } catch (e) {}
+}
+window.addEventListener("popstate", function () {
+  if (!histOn) return;
+  histOn = false;
+  if ($("#pl").classList.contains("on")) {
+    if ($("#gp").classList.contains("on")) {
+      closeGp();
+      pushHist();
+      return;
+    }
+    closePlayer();
+  }
+});
+
 function closePlayer() {
   stopTimers();
   cur = null;
@@ -992,6 +1091,10 @@ function closePlayer() {
   closeGp();
   setFull(false);
   $("#pl").classList.remove("on");
+  popHist();
+  if (lastFocus && document.body.contains(lastFocus)) {
+    try { lastFocus.focus(); } catch (e) {}
+  }
 }
 
 // live in HLS mode: native on Safari, hls.js elsewhere. returns false if not possible
@@ -1109,6 +1212,10 @@ function watchdog() {
 
 function play(url, title, kind, direct, tsUrl) {
   stopTimers();
+  if (!$("#pl").classList.contains("on")) {
+    const ae = document.activeElement;
+    if (ae && ae.closest && ae.closest("#app")) lastFocus = ae;
+  }
   cur = { url: url, kind: kind, auto: kind === "live", direct: direct || "", title: title, tsUrl: tsUrl || "", mode: kind === "live" ? "hls" : "", epId: "" };
   retries = 0;
   lastT = -1;
@@ -1120,6 +1227,10 @@ function play(url, title, kind, direct, tsUrl) {
   $("#bk").classList.toggle("hide", isLive);
   $("#fw").classList.toggle("hide", isLive);
   $("#pl").classList.add("on");
+  pushHist();
+  if (document.activeElement && document.activeElement.blur) {
+    try { document.activeElement.blur(); } catch (e) {}
+  }
   startStream();
   layoutSize();
   if (cur.auto) watchTimer = setInterval(watchdog, 2000);
@@ -1240,7 +1351,7 @@ function showUi() {
   if (uiTimer) clearTimeout(uiTimer);
   uiTimer = setTimeout(function () {
     if (!$("#gp").classList.contains("on")) p.classList.remove("ui");
-  }, 3500);
+  }, 5000);
 }
 function hideUi() {
   if (uiTimer) { clearTimeout(uiTimer); uiTimer = null; }
@@ -1302,7 +1413,7 @@ function setFull(on) {
       }
     }
     setTimeout(fixRot, 450);
-    hud("نقرتان للرجوع");
+    hud("للرجوع اضغط رجوع");
   } else {
     unlockOrientation();
     if (usedApi) {
@@ -1317,6 +1428,7 @@ function setFull(on) {
 function toggleFull() {
   setFull(!full);
 }
+$("#fs").onclick = toggleFull;
 
 document.addEventListener("fullscreenchange", function () {
   if (!document.fullscreenElement && usedApi) {
@@ -1482,7 +1594,245 @@ $("#vlc").onclick = function () {
 
 $("#pclose").onclick = closePlayer;
 
+// ---------- remote control (TV) and keyboard (PC) ----------
+function playerOn() { return $("#pl").classList.contains("on"); }
+function gpOn() { return $("#gp").classList.contains("on"); }
+function isShown(e) {
+  return !!(e && (e.offsetWidth || e.offsetHeight || (e.getClientRects && e.getClientRects().length)));
+}
+function isTextEl(a) {
+  return !!(a && a.tagName === "INPUT" && (a.type === "text" || a.type === "password"));
+}
+function inCtl(a) {
+  return !!(a && a.closest && (a.closest("#ctl") || a.closest("#pbar") || a.closest("#gp")));
+}
+function fineMouse() {
+  return !!(window.matchMedia && window.matchMedia("(pointer:fine)").matches);
+}
+
+function navRoot() {
+  if (playerOn()) {
+    if (gpOn()) return $("#gp");
+    return $("#pl");
+  }
+  if (!$("#app").classList.contains("hide")) return $("#app");
+  return $("#login");
+}
+
+function navEls() {
+  const all = navRoot().querySelectorAll("button, input");
+  const out = [];
+  for (let i = 0; i < all.length; i++) {
+    const e = all[i];
+    if (e.disabled) continue;
+    if (!isShown(e)) continue;
+    out.push(e);
+  }
+  return out;
+}
+
+function keepVisible(e) {
+  if (playerOn() && !gpOn()) return;
+  try { e.scrollIntoView({ block: "nearest", inline: "nearest" }); } catch (x) {}
+}
+
+// move the focus to the nearest control in the pressed direction
+function moveFocus(dir) {
+  const els = navEls();
+  if (!els.length) return false;
+  const a = document.activeElement;
+  if (!a || els.indexOf(a) < 0) {
+    els[0].focus();
+    keepVisible(els[0]);
+    return true;
+  }
+  const r = a.getBoundingClientRect();
+  const cx = r.left + r.width / 2;
+  const cy = r.top + r.height / 2;
+  let best = null;
+  let bestScore = 1e12;
+  for (let i = 0; i < els.length; i++) {
+    const e = els[i];
+    if (e === a) continue;
+    const q = e.getBoundingClientRect();
+    const dx = q.left + q.width / 2 - cx;
+    const dy = q.top + q.height / 2 - cy;
+    let main = 0;
+    let side = 0;
+    if (dir === "Right") { main = dx; side = Math.abs(dy); }
+    else if (dir === "Left") { main = -dx; side = Math.abs(dy); }
+    else if (dir === "Down") { main = dy; side = Math.abs(dx); }
+    else { main = -dy; side = Math.abs(dx); }
+    if (main <= 4) continue;
+    const score = main + side * 2.5;
+    if (score < bestScore) { bestScore = score; best = e; }
+  }
+  if (!best) return false;
+  best.focus();
+  keepVisible(best);
+  return true;
+}
+
+// arrows while the video itself has the focus
+function videoKey(dir) {
+  if (dir === "Up") { openGp(); return; }
+  if (dir === "Down") {
+    showUi();
+    try { $("#pp").focus(); } catch (e) {}
+    return;
+  }
+  if (!cur) return;
+  if (cur.kind === "live") { showUi(); return; }
+  jump(dir === "Right" ? 10 : -10);
+  hud(dir === "Right" ? "+10" : "-10");
+  showUi();
+}
+
+function doBack() {
+  if (playerOn()) {
+    if (gpOn()) { closeGp(); return; }
+    const a = document.activeElement;
+    if (full && inCtl(a)) {
+      try { a.blur(); } catch (e) {}
+      hideUi();
+      return;
+    }
+    closePlayer();
+    return;
+  }
+  if (!$("#app").classList.contains("hide")) {
+    if (backFn || searchMode) $("#back").click();
+  }
+}
+
+function dirOf(e) {
+  const k = e.key;
+  if (k === "ArrowUp") return "Up";
+  if (k === "ArrowDown") return "Down";
+  if (k === "ArrowLeft") return "Left";
+  if (k === "ArrowRight") return "Right";
+  const c = e.keyCode;
+  if (c === 37) return "Left";
+  if (c === 38) return "Up";
+  if (c === 39) return "Right";
+  if (c === 40) return "Down";
+  return "";
+}
+
+function isBackKey(e) {
+  const k = e.key;
+  const c = e.keyCode;
+  return k === "Escape" || k === "GoBack" || k === "BrowserBack" || c === 27 || c === 4 || c === 461 || c === 10009;
+}
+
+document.addEventListener("keydown", function (e) {
+  const k = e.key;
+  const c = e.keyCode;
+  const a = document.activeElement;
+  const text = isTextEl(a);
+  document.body.classList.add("kb");
+
+  if (playerOn() && full && $("#pl").classList.contains("ui")) showUi();
+
+  // back
+  if (isBackKey(e) || (k === "Backspace" && !text)) {
+    if (text && k === "Escape") { try { a.blur(); } catch (x) {} e.preventDefault(); return; }
+    e.preventDefault();
+    doBack();
+    return;
+  }
+
+  // media keys of the remote
+  if (playerOn()) {
+    if (k === "MediaPlayPause" || k === "MediaPlay" || k === "MediaPause" || c === 179 || c === 415 || c === 19) {
+      e.preventDefault();
+      $("#pp").click();
+      return;
+    }
+    if (k === "MediaStop" || c === 413) { e.preventDefault(); closePlayer(); return; }
+    if (k === "MediaFastForward" || k === "MediaTrackNext" || c === 228 || c === 417) { e.preventDefault(); jump(10); hud("+10"); return; }
+    if (k === "MediaRewind" || k === "MediaTrackPrevious" || c === 227 || c === 412) { e.preventDefault(); jump(-10); hud("-10"); return; }
+  }
+
+  // enter on a checkbox
+  if ((k === "Enter") && a && a.type === "checkbox") {
+    e.preventDefault();
+    a.checked = !a.checked;
+    return;
+  }
+  // enter in the password box connects on a computer (on a TV it opens the keyboard)
+  if (k === "Enter" && a && a.id === "pwd" && fineMouse()) {
+    e.preventDefault();
+    doConnect();
+    return;
+  }
+
+  // video mode: nothing is focused inside the player
+  if (playerOn() && !gpOn() && !inCtl(a)) {
+    if (k === "Enter" || k === " " || c === 13) {
+      e.preventDefault();
+      $("#pp").click();
+      showUi();
+      return;
+    }
+    if (k === "f" || k === "F") { e.preventDefault(); toggleFull(); return; }
+    const d0 = dirOf(e);
+    if (d0) { e.preventDefault(); videoKey(d0); return; }
+    return;
+  }
+
+  const dir = dirOf(e);
+  if (!dir) return;
+
+  // sliders: left and right change the value
+  if (a && a.id === "seek" && (dir === "Left" || dir === "Right")) {
+    e.preventDefault();
+    jump(dir === "Right" ? 10 : -10);
+    showUi();
+    return;
+  }
+  if (a && a.id === "vol" && (dir === "Left" || dir === "Right")) {
+    e.preventDefault();
+    setVol(v.volume + (dir === "Right" ? 0.05 : -0.05));
+    return;
+  }
+  // in text boxes left and right move the cursor
+  if (text && (dir === "Left" || dir === "Right")) return;
+
+  // on a computer with nothing selected, arrows keep scrolling the page
+  if (!playerOn() && !a && fineMouse()) return;
+  if (!playerOn() && a === document.body && fineMouse()) return;
+
+  e.preventDefault();
+  const moved = moveFocus(dir);
+  if (!moved && playerOn() && !gpOn() && dir === "Up") {
+    try { a.blur(); } catch (x) {}
+  }
+});
+
+document.addEventListener("pointerdown", function (e) {
+  if (e.pointerType === "touch" || e.pointerType === "mouse") document.body.classList.remove("kb");
+});
+
+// after a mouse click on a control the arrows go back to seeking
+$("#ctl").addEventListener("pointerup", function (e) {
+  if (e.pointerType !== "mouse") return;
+  setTimeout(function () {
+    const a = document.activeElement;
+    if (a && a.tagName === "BUTTON") { try { a.blur(); } catch (x) {} }
+  }, 0);
+});
+
+// the full screen button shows only on devices without touch (TV and computer)
+if (!(navigator.maxTouchPoints > 0)) $("#fs").classList.remove("hide");
+
 loadLast();
+setTimeout(function () {
+  if (!$("#login").classList.contains("hide")) {
+    const p = document.querySelector(".pick");
+    try { (p || $("#srv")).focus(); } catch (e) {}
+  }
+}, 150);
 </script>
 </body>
 </html>
